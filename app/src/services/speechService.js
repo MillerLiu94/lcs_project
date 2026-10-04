@@ -27,7 +27,7 @@ function readTranscript(event) {
 const speechService = {
   isSupported,
 
-  start({ onResult, onError, lang = DEFAULT_LANG } = {}) {
+  start({ onResult, onError, onEnd, lang = DEFAULT_LANG } = {}) {
     const reportError = (error) => {
       if (typeof onError === 'function') onError(error)
     }
@@ -41,26 +41,38 @@ const speechService = {
     try {
       this.stop()
       const recognition = new RecognitionCtor()
+      const sessionId = ++this._sessionSeq
+      // Only the currently active session may report or clear shared state; a
+      // stale session's queued onend must never clobber a newer one.
+      const isActive = () => this._sessionId === sessionId
+
       recognition.lang = lang
       recognition.continuous = false
       recognition.interimResults = false
       recognition.maxAlternatives = 1
 
       recognition.onresult = (event) => {
+        if (!isActive()) return
         if (typeof onResult === 'function') onResult(readTranscript(event))
       }
       recognition.onerror = (event) => {
+        if (!isActive()) return
         const reason = event && event.error ? event.error : '語音辨識失敗'
         reportError(new Error(reason))
       }
       recognition.onend = () => {
+        if (!isActive()) return
         this._recognition = null
+        this._sessionId = 0
+        if (typeof onEnd === 'function') onEnd()
       }
 
       this._recognition = recognition
+      this._sessionId = sessionId
       recognition.start()
     } catch (error) {
       this._recognition = null
+      this._sessionId = 0
       reportError(error)
     }
   },
@@ -69,6 +81,7 @@ const speechService = {
     if (!this._recognition) return
     const recognition = this._recognition
     this._recognition = null
+    this._sessionId = 0
     try {
       recognition.stop()
     } catch (error) {
@@ -77,6 +90,8 @@ const speechService = {
   },
 
   _recognition: null,
+  _sessionId: 0,
+  _sessionSeq: 0,
 }
 
 export default speechService

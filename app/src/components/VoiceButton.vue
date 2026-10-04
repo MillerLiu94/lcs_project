@@ -56,6 +56,9 @@ export default {
           this.listening = false
           this.$emit('error', error)
         },
+        onEnd: () => {
+          this.listening = false
+        },
       })
     },
   },

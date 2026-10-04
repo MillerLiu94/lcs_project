@@ -34,4 +34,29 @@ describe('VoiceButton', () => {
     await w.trigger('click')
     expect(w.emitted('error')).toBeTruthy()
   })
+
+  test('辨識結束但沒有結果時，按鈕不會卡在錄音中', async () => {
+    const instances = []
+    class FakeRecognition {
+      constructor() { instances.push(this) }
+      start() {}
+      stop() {}
+    }
+    const original = window.SpeechRecognition
+    window.SpeechRecognition = FakeRecognition
+    try {
+      const w = mount(VoiceButton, { propsData: { supported: true } })
+      await w.trigger('click')
+      expect(w.vm.listening).toBe(true)
+      expect(w.find('button').attributes('aria-pressed')).toBe('true')
+
+      instances[0].onend() // 未產生 result／error 就自然結束
+      await w.vm.$nextTick()
+
+      expect(w.vm.listening).toBe(false)
+      expect(w.find('button').attributes('aria-pressed')).toBe('false')
+    } finally {
+      window.SpeechRecognition = original
+    }
+  })
 })
