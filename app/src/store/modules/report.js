@@ -37,6 +37,11 @@ export default {
     setCategory(state, category) {
       state.draft.category = typeof category === 'string' ? category : ''
     },
+    // 位置由 location 模組（或步驟畫面）決定後寫入草稿；
+    // 可能是帶真實座標的物件，或 §14.4 的 { mode:'unconfirmed', text }。
+    setLocation(state, location) {
+      state.draft.location = location && typeof location === 'object' ? { ...location } : null
+    },
   },
   actions: {
     /**
