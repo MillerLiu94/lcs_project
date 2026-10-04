@@ -1,5 +1,5 @@
 <template>
-  <div class="app-shell">
+  <div class="app-shell" :class="{ 'app-shell--desktop': isDesktop }">
     <TopNav v-if="isDesktop" />
 
     <main class="app-shell__main">
@@ -31,14 +31,16 @@ export default {
   background: var(--background);
   color: var(--foreground);
 }
+/* Mobile-first: full-width single column with room for the floating bottom nav. */
 .app-shell__main {
-  max-width: 72rem;
   margin: 0 auto;
   padding: 1.5rem 1rem 7rem;
 }
+/* Desktop enhancement: content max-width narrows and centres under the top nav. */
 @media (min-width: 1024px) {
   .app-shell__main {
-    padding-bottom: 2rem;
+    max-width: 72rem;
+    padding: 2rem 2rem 3rem;
   }
 }
 </style>

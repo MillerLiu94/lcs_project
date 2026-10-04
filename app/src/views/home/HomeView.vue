@@ -92,6 +92,11 @@ export default {
   grid-template-columns: 1fr;
   gap: 0.75rem;
 }
+@media (min-width: 1024px) {
+  .home__cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 .home__ask {
   display: flex;
   flex-direction: column;

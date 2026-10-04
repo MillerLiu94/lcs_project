@@ -75,6 +75,12 @@ export default {
   padding: 0;
   list-style: none;
 }
+/* Desktop enhancement (G6): two-column welfare results at 1024+. */
+@media (min-width: 1024px) {
+  .result-list__items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
 .result-list__disclaimer {
   margin: 0;
   font-size: 0.95rem;

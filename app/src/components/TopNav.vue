@@ -27,6 +27,16 @@ export default {
 </script>
 
 <style scoped>
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  margin: 0 auto;
+  max-width: 72rem;
+  padding: 0.5rem 1rem;
+  background: var(--background);
+  border-bottom: 1px solid var(--border);
+}
 .top-nav__list {
   display: flex;
   gap: 0.5rem;

@@ -20,6 +20,15 @@ body {
   scroll-padding-bottom: 5.5rem;
 }
 
+/* Desktop layout (G6): no bottom nav; instead keep focus clear of the sticky
+   top nav (G4 / WCAG 2.4.11). */
+@media (min-width: 1024px) {
+  * {
+    scroll-padding-top: 5rem;
+    scroll-padding-bottom: 1rem;
+  }
+}
+
 /* Visible keyboard focus using the theme ring token (G4) */
 :focus-visible {
   outline: 2px solid var(--ring);
