@@ -6,12 +6,20 @@ import welfare from '../../../store/modules/welfare'
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
+const RouterLinkStub = {
+  name: 'RouterLink',
+  props: { to: { type: [String, Object], required: true } },
+  render(h) {
+    return h('a', { attrs: { href: typeof this.to === 'string' ? this.to : '#' } }, this.$slots.default)
+  },
+}
+
 function makeStore() {
   return new Vuex.Store({ modules: { welfare } })
 }
 
 function mountView(store) {
-  return mount(WelfareView, { localVue, store })
+  return mount(WelfareView, { localVue, store, stubs: { RouterLink: RouterLinkStub } })
 }
 
 const NOW = new Date('2026-10-04T12:00:00+08:00')
@@ -28,10 +36,12 @@ describe('WelfareView（P8–P11 狀態切換）', () => {
     window.history.replaceState({}, '', '/')
   })
 
-  test('初始顯示輸入畫面（P8），沒有搜尋或結果區塊', () => {
+  test('沒有關鍵字時顯示前往對話的入口，且沒有輸入框', () => {
     const w = mountView(makeStore())
-    expect(w.findComponent({ name: 'SearchInput' }).exists()).toBe(true)
-    expect(w.findComponent({ name: 'SearchingState' }).exists()).toBe(false)
+    expect(w.findComponent({ name: 'SearchInput' }).exists()).toBe(false)
+    const link = w.find('a[href="/assistant/welfare"]')
+    expect(link.exists()).toBe(true)
+    expect(link.text()).toContain('去找福利和活動')
     expect(w.findComponent({ name: 'ResultList' }).exists()).toBe(false)
     w.destroy()
   })
@@ -41,12 +51,12 @@ describe('WelfareView（P8–P11 狀態切換）', () => {
     const w = mount(WelfareView, {
       localVue,
       store,
+      stubs: { RouterLink: RouterLinkStub },
       mocks: { $route: { query: { q: '老人活動' } } },
     })
     await new Promise((resolve) => setTimeout(resolve, 0))
     expect(store.state.welfare.keyword).toBe('老人活動')
     expect(store.state.welfare.phase).toBe('done')
-    expect(w.findComponent({ name: 'SearchInput' }).props('value')).toBe('老人活動')
     w.destroy()
   })
 
@@ -69,7 +79,6 @@ describe('WelfareView（P8–P11 狀態切換）', () => {
     expect(store.state.welfare.phase).toBe('processing')
     expect(w.text()).toContain('繼續等待')
     expect(w.text()).toContain('重新搜尋')
-    expect(w.findComponent({ name: 'SearchInput' }).props('value')).toBe('活動')
     w.destroy()
   })
 
