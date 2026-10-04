@@ -12,7 +12,7 @@
       icon="Flag"
       title="回報社區問題"
       desc="看到路燈壞掉、垃圾沒收，拍照或直接描述都可以"
-      to="/report"
+      to="/assistant/report"
     />
 
     <div class="home__cards">
@@ -20,13 +20,13 @@
         icon="MapPin"
         title="附近事件"
         desc="看看社區大小事"
-        to="/events"
+        to="/assistant/events"
       />
       <BigTaskCard
         icon="Gift"
         title="福利活動"
         desc="補助、課程、活動"
-        to="/welfare"
+        to="/assistant/welfare"
       />
     </div>
 

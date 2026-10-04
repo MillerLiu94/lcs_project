@@ -11,6 +11,7 @@ import EventListView from '../views/query/EventListView.vue'
 import EventDetailView from '../views/query/EventDetailView.vue'
 import WelfareView from '../views/welfare/WelfareView.vue'
 import ClarifyView from '../views/clarify/ClarifyView.vue'
+import AssistantView from '../views/assistant/AssistantView.vue'
 
 Vue.use(VueRouter)
 
@@ -36,6 +37,7 @@ const routes = [
   { path: '/events/:id', name: 'event-detail', component: EventDetailView },
   { path: '/welfare', name: 'welfare', component: WelfareView },
   { path: '/clarify', name: 'clarify', component: ClarifyView },
+  { path: '/assistant/:task', name: 'assistant', component: AssistantView },
 ]
 
 const router = new VueRouter({
