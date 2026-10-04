@@ -10,9 +10,9 @@ import DoneView from '../views/report/DoneView.vue'
 import EventListView from '../views/query/EventListView.vue'
 import EventDetailView from '../views/query/EventDetailView.vue'
 import WelfareView from '../views/welfare/WelfareView.vue'
-import ClarifyView from '../views/clarify/ClarifyView.vue'
 import AssistantView from '../views/assistant/AssistantView.vue'
 import MyReportsView from '../views/my/MyReportsView.vue'
+import ResultsView from '../views/results/ResultsView.vue'
 
 Vue.use(VueRouter)
 
@@ -44,7 +44,7 @@ const routes = [
   { path: '/events', name: 'events', component: EventListView },
   { path: '/events/:id', name: 'event-detail', component: EventDetailView },
   { path: '/welfare', name: 'welfare', component: WelfareView },
-  { path: '/clarify', name: 'clarify', component: ClarifyView },
+  { path: '/results', name: 'results', component: ResultsView },
   { path: '/assistant/:task', name: 'assistant', component: AssistantView, props: true },
   { path: '/my-reports', name: 'my-reports', component: MyReportsView },
 ]
