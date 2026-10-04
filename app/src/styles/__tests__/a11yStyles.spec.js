@@ -7,9 +7,10 @@ const override = fs.readFileSync(overrideUrl, 'utf8')
 const tokensUrl = new URL(['..', 'tokens.css'].join('/'), import.meta.url)
 const tokens = fs.readFileSync(tokensUrl, 'utf8')
 
-// S4 §9／§12：底部導覽遮擋焦點需以 scroll-padding 補償；G4 要求觸控 >=48px 與
-// 尊重 prefers-reduced-motion。此處以原始樣式確定這些保證沒有在重構中遺失。
-describe('無障礙樣式保證', () => {
+// 迴歸守門（regression guard）：這些測試只以原始碼字串確認無障礙樣式「存在」，
+// 不量測瀏覽器渲染結果（對比數值、reduced-motion 執行時行為、375px 實際排版）。
+// 渲染實測屬人工複驗，見 app/ACCEPTANCE.md §5。
+describe('無障礙樣式存在（靜態迴歸守門）', () => {
   test('底部導覽以 scroll-padding-bottom 補償焦點（WCAG 2.4.11）', () => {
     expect(override).toContain('scroll-padding-bottom')
   })

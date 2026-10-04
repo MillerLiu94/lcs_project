@@ -19,7 +19,7 @@
 - [x] **每筆外部結果都附來源／日期／原始連結；AI 內容有揭露** — `ResultCard`＋`SourceBadge`（來源／發布日）＋原始公告連結；`ResultList` 有「以下內容由系統整理，請以原始來源為準。」。`welfareView.spec.js` 逐筆斷言來源／日期／連結。
 - [x] **搜尋等待有分段回饋，逾時有出路** — `SearchingState` 三段文案＋逾時「繼續等待／重新搜尋」；`welfareView.spec.js` 驗證。
 - [x] **文案經 375px、放大字級檢視（靜態）** — 無固定寬度 >375px 的容器；chip／卡片皆 `flex-wrap`／單欄；`confirm__row` 以 `1fr`＋`word-break` 收斂。像素級渲染待 §4 複驗。
-- [x] **對比、focus、觸控 ≥48px、reduced-motion 全數通過** — 對比：`tokens.css` 逐 token 標註 WCAG 比值（內文 ≥4.5:1）；focus：`:focus-visible` 使用 `--ring`；觸控：互動元件 `min-height:48px` 起（見 §3 清單）；reduced-motion：`element-override.scss` 全域守則＋`BigTaskCard`／`ClarifyView` 局部守則。由 `a11yStyles.spec.js` 守門。
+- [x] **對比、focus、觸控 ≥48px、reduced-motion 靜態具備** — 對比：`tokens.css` 逐 token 標註 WCAG 比值（內文 ≥4.5:1）；focus：`:focus-visible` 使用 `--ring`；觸控：互動元件 `min-height:48px` 起（見 §3 清單）；reduced-motion：`element-override.scss` 全域守則＋`BigTaskCard`／`ClarifyView` 局部守則。由 `a11yStyles.spec.js` 守門。**此列僅代表靜態樣式存在；對比渲染量測與 reduced-motion 執行時行為待 §5 複驗，尚未計為通過。**
 - [x] **畫面不出現 Agent／API／Database 等技術詞（G5）** — 全 `views/`／`components/` 掃描無命中；技術詞僅存在於程式註解與測試。
 - [x] **語音、定位被拒時，文字路徑完整可用** — 語音不支援／失敗時 `NlInputBox` 顯示「請直接用打字」；定位拒權時 `LocationStep` 自動改走文字描述（`locationStep.spec.js` 兩者皆有測試）。
 
