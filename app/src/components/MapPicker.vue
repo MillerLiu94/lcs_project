@@ -5,12 +5,13 @@
       class="map-picker__canvas"
       role="application"
       :aria-label="ariaLabel"
+      :aria-describedby="descriptionId"
       tabindex="0"
       @keydown="onKeydown"
     ></div>
 
-    <p v-if="!ready" class="map-picker__note">{{ unavailableNote }}</p>
-    <p v-else class="map-picker__hint">{{ interactionHint }}</p>
+    <p v-if="!ready" :id="descriptionId" class="map-picker__note">{{ unavailableNote }}</p>
+    <p v-else :id="descriptionId" class="map-picker__hint">{{ interactionHint }}</p>
   </div>
 </template>
 
@@ -20,6 +21,8 @@
 // S6 §14.4：沒有可錨定的真實點（候選／目前位置）前，地圖不建立、也絕不發出座標。
 const KEY = (import.meta.env && import.meta.env.VITE_GOOGLE_MAPS_KEY) || ''
 const STEP = 0.0005
+
+let uid = 0
 
 function mapsOrNull() {
   if (typeof window === 'undefined' || !window.google) return null
@@ -52,9 +55,11 @@ export default {
     marker: { type: Boolean, default: true },
   },
   data() {
+    uid += 1
     return {
       ready: false,
       mapsLib: null,
+      descriptionId: `map-picker-desc-${uid}`,
       unavailableNote: '地圖需要一個大概的位置才能顯示。可以改用文字描述，或選「不確定，先送出」。',
       interactionHint: '在地圖上點一下，或用鍵盤方向鍵移動圖釘。',
     }

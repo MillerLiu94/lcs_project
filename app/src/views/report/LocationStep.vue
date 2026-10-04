@@ -26,7 +26,11 @@
 
     <MapPicker v-if="situation === 'map'" :lat="anchor.lat" :lng="anchor.lng" @pick="onPick" />
 
-    <ErrorAlert v-if="error" :message="error" />
+    <ErrorAlert v-if="error" :message="error">
+      <template #action>
+        <button type="button" class="location__retry" @click="retryText">再試一次</button>
+      </template>
+    </ErrorAlert>
 
     <p v-if="previewText" class="location__preview">{{ previewText }}</p>
 
@@ -126,6 +130,10 @@ export default {
         this.error = '網路有點問題，請再試一次。'
       }
     },
+    retryText() {
+      // 文字搜尋失敗後提供明確重試；輸入仍保留，可直接再找一次。
+      this.findByText()
+    },
     onPick(lat, lng) {
       const mode = this.candidates.length > 0 ? 'map-confirm' : 'low-precision'
       this.$store.commit('location/setSelected', { mode, lat, lng })
@@ -171,7 +179,8 @@ export default {
 .location__preview { margin: 0; font-size: 1.125rem; color: var(--foreground); }
 .location__back { background: none; border: none; color: var(--foreground); }
 .location__skip { background: none; border: 2px solid var(--input); color: var(--foreground); }
-.location__stack button:not(.location__skip) {
+.location__stack button:not(.location__skip),
+.location__retry {
   background: var(--primary);
   color: var(--primary-foreground);
   border: 2px solid var(--primary);

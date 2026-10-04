@@ -7,6 +7,7 @@
       :value="value"
       :placeholder="placeholder"
       :rows="rows"
+      :aria-describedby="message ? messageId : undefined"
       @input="onInput"
     ></textarea>
 
@@ -16,11 +17,8 @@
         @result="onVoiceResult"
         @error="onVoiceError"
       />
-      <span v-if="voiceError" class="nl-input__message" role="status">
-        {{ voiceError }}
-      </span>
-      <span v-else-if="!voiceSupported" class="nl-input__message">
-        此裝置不支援語音，請直接用打字
+      <span v-if="message" :id="messageId" class="nl-input__message" role="status">
+        {{ message }}
       </span>
     </div>
   </div>
@@ -46,11 +44,20 @@ export default {
   },
   data() {
     uid += 1
-    return { inputId: `nl-input-${uid}`, voiceError: '' }
+    return {
+      inputId: `nl-input-${uid}`,
+      messageId: `nl-input-msg-${uid}`,
+      voiceError: '',
+    }
   },
   computed: {
     voiceSupported() {
       return speechService.isSupported()
+    },
+    // 語音提示／錯誤共用一個輪詢區塊，並以 aria-describedby 與輸入框關聯。
+    message() {
+      if (this.voiceError) return this.voiceError
+      return this.voiceSupported ? '' : '此裝置不支援語音，請直接用打字'
     },
   },
   methods: {

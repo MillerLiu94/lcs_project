@@ -86,6 +86,23 @@ describe('LocationStep（P2 確認位置）', () => {
     expect(push).toHaveBeenCalledWith({ name: 'report-confirm' })
   })
 
+  test('文字找位置失敗時顯示錯誤，並提供「再試一次」下一步', async () => {
+    window.history.replaceState({}, '', '/?mock=error')
+    try {
+      const w = mountStep(makeStore())
+      await w.findAll('.location__stack button').at(1).trigger('click') // 用文字描述
+      await w.find('textarea').setValue('中華路')
+      await w.find('form').trigger('submit')
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      expect(w.vm.error).toBeTruthy()
+      const retry = w.find('.location__retry')
+      expect(retry.exists()).toBe(true)
+      expect(retry.text()).toBe('再試一次')
+    } finally {
+      window.history.replaceState({}, '', '/')
+    }
+  })
+
   test('在地圖模式下仍可改用文字描述（文字路徑永遠存在）', async () => {
     const w = mountStep(makeStore())
     await w.findAll('.location__stack button').at(2).trigger('click')
