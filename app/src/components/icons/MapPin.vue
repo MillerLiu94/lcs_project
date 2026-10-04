@@ -1,5 +1,5 @@
 <template>
-  <i class="el-icon-location" :style="iconStyle" />
+  <i class="el-icon-location-outline" :style="iconStyle" />
 </template>
 
 <script>

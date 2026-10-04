@@ -1,5 +1,5 @@
 <template>
-  <i class="el-icon-s-flag" :style="iconStyle" />
+  <i class="el-icon-warning-outline" :style="iconStyle" />
 </template>
 
 <script>

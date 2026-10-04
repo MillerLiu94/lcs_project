@@ -44,7 +44,9 @@
             v-if="detail.photo"
             class="detail__photo"
             :src="detail.photo"
-            alt="此事件的現場照片"
+            :alt="detail.title ? `${detail.title} 的現場照片` : '此事件的現場照片'"
+            loading="lazy"
+            decoding="async"
           />
           <p v-else class="detail__description">這則事件沒有附照片。</p>
         </div>
@@ -115,14 +117,14 @@ export default {
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-float);
 }
-.detail__title { margin: 0; font-size: 1.5rem; line-height: 1.4; }
+.detail__title { margin: 0; font-size: 1.5rem; line-height: 1.4; overflow-wrap: anywhere; }
 .detail__meta { display: flex; flex-direction: column; gap: 0.75rem; margin: 0; }
-.detail__meta-item { display: flex; gap: 0.75rem; }
+.detail__meta-item { display: flex; gap: 0.75rem; min-width: 0; }
 .detail__meta-label { flex: none; min-width: 3rem; color: var(--muted-foreground); }
-.detail__meta-value { margin: 0; font-size: 1.125rem; line-height: 1.6; }
+.detail__meta-value { margin: 0; min-width: 0; font-size: 1.125rem; line-height: 1.6; overflow-wrap: anywhere; }
 .detail__section { display: flex; flex-direction: column; gap: 0.5rem; }
 .detail__section-title { margin: 0; font-size: 1.125rem; }
-.detail__description { margin: 0; font-size: 1.125rem; line-height: 1.7; }
+.detail__description { margin: 0; font-size: 1.125rem; line-height: 1.7; overflow-wrap: anywhere; }
 .detail__photo { max-width: 100%; height: auto; border-radius: var(--radius-card); }
 .detail__action {
   align-self: flex-start;

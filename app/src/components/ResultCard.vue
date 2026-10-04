@@ -74,6 +74,7 @@ export default {
   font-size: 1.375rem;
   font-weight: 700;
   line-height: 1.4;
+  overflow-wrap: anywhere;
 }
 .result-card__meta {
   display: flex;
@@ -95,10 +96,17 @@ export default {
 .result-card__meta-value {
   display: inline-flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.375rem;
+  min-width: 0;
   margin: 0;
   font-size: 1.125rem;
   line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.result-card__meta-value span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 .result-card__footer {
   display: flex;

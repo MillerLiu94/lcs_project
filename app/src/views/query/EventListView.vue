@@ -181,6 +181,7 @@ export default {
 .events__chip--on { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); font-weight: 700; }
 .events__status { margin: 0; color: var(--muted-foreground); }
 .events__list { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
+.events__item { min-width: 0; }
 /* Desktop enhancement (G6): two-column event results at 1024+. */
 @media (min-width: 1024px) { .events__list { grid-template-columns: repeat(2, 1fr); } }
 .events__card { display: flex; flex-direction: column; gap: 0.5rem; color: inherit; text-decoration: none; }
@@ -190,7 +191,7 @@ export default {
   background: var(--muted);
   color: var(--foreground);
   border-radius: var(--radius-pill);
-  font-size: 0.95rem;
+  font-size: 1rem;
 }
 .events button:focus-visible,
 .events a:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; border-radius: var(--radius); }

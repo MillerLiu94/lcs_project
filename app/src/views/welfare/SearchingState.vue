@@ -46,21 +46,38 @@ export default {
   },
   computed: {
     message() {
+      if (this.timeout) return '搜尋還在進行，請選擇繼續等待或重新搜尋。'
       return MESSAGES[Math.min(this.stage, MESSAGES.length - 1)]
     },
   },
+  watch: {
+    timeout(next) {
+      if (next) this.clearTimer()
+    },
+  },
   mounted() {
-    this.timer = setInterval(() => {
-      if (this.stage >= MESSAGES.length - 1) {
-        clearInterval(this.timer)
-        this.timer = null
-        return
-      }
-      this.stage += 1
-    }, STAGE_MS)
+    if (this.timeout) return
+    this.startTimer()
   },
   beforeDestroy() {
-    if (this.timer) clearInterval(this.timer)
+    this.clearTimer()
+  },
+  methods: {
+    startTimer() {
+      this.timer = setInterval(() => {
+        if (this.stage >= MESSAGES.length - 1) {
+          this.clearTimer()
+          return
+        }
+        this.stage += 1
+      }, STAGE_MS)
+    },
+    clearTimer() {
+      if (this.timer) {
+        clearInterval(this.timer)
+        this.timer = null
+      }
+    },
   },
 }
 </script>

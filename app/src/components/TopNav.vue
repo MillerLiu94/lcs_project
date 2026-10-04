@@ -33,7 +33,7 @@ export default {
   z-index: 15;
   margin: 0 auto;
   max-width: 72rem;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 2rem;
   background: var(--background);
   border-bottom: 1px solid var(--border);
 }

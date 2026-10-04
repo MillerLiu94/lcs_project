@@ -9,8 +9,8 @@ import Microphone from '../Microphone.vue'
 
 const ICONS = {
   House: [House, 'el-icon-house'],
-  Flag: [Flag, 'el-icon-s-flag'],
-  MapPin: [MapPin, 'el-icon-location'],
+  Flag: [Flag, 'el-icon-warning-outline'],
+  MapPin: [MapPin, 'el-icon-location-outline'],
   Gift: [Gift, 'el-icon-present'],
   ArrowLeft: [ArrowLeft, 'el-icon-arrow-left'],
   Calendar: [Calendar, 'el-icon-date'],
