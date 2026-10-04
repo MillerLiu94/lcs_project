@@ -16,9 +16,9 @@
 
 <script>
 // Google Maps 的唯一封裝處：其餘畫面不直接碰 google。
-// 沒有金鑰或 google 尚未載入時，整個載入器是 no-op，改顯示文字提示（不丟例外）。
+// 沒有金鑰或 google 尚未載入時，載入器是 no-op，改顯示文字提示（不丟例外）。
+// S6 §14.4：沒有可錨定的真實點（候選／目前位置）前，地圖不建立、也絕不發出座標。
 const KEY = (import.meta.env && import.meta.env.VITE_GOOGLE_MAPS_KEY) || ''
-const FALLBACK_CENTER = { lat: 25.033, lng: 121.5654 }
 const STEP = 0.0005
 
 function mapsOrNull() {
@@ -54,7 +54,8 @@ export default {
   data() {
     return {
       ready: false,
-      unavailableNote: '這裡的地圖暫時打不開，可以用文字描述位置。',
+      mapsLib: null,
+      unavailableNote: '地圖需要一個大概的位置才能顯示。可以改用文字描述，或選「不確定，先送出」。',
       interactionHint: '在地圖上點一下，或用鍵盤方向鍵移動圖釘。',
     }
   },
@@ -62,31 +63,41 @@ export default {
     ariaLabel() {
       return '選擇事件位置的地圖'
     },
+    // 有真實錨點才允許渲染／操作地圖。
+    hasAnchor() {
+      return typeof this.lat === 'number' && typeof this.lng === 'number'
+    },
     initialCenter() {
-      const hasPoint = typeof this.lat === 'number' && typeof this.lng === 'number'
-      return hasPoint ? { lat: this.lat, lng: this.lng } : FALLBACK_CENTER
+      return this.hasAnchor ? { lat: this.lat, lng: this.lng } : null
     },
   },
   watch: {
     lat() {
-      this.recenter()
+      this.syncMap()
     },
     lng() {
-      this.recenter()
+      this.syncMap()
     },
   },
   async mounted() {
-    const maps = await loadGoogleMaps()
-    if (!maps || !this.$refs.canvas) return
-    this.buildMap(maps)
+    this.mapsLib = await loadGoogleMaps()
+    this.syncMap()
   },
   methods: {
-    buildMap(maps) {
-      const map = new maps.Map(this.$refs.canvas, {
-        center: this.initialCenter,
-        zoom: 16,
-      })
-      const markerOptions = { position: this.initialCenter, map }
+    // 錨點出現前不建圖；出現後才建立，之後只更新中心。
+    syncMap() {
+      if (!this.mapsLib || !this.$refs.canvas) return
+      if (this.ready) {
+        this.recenter()
+        return
+      }
+      if (this.hasAnchor) this.buildMap()
+    },
+    buildMap() {
+      const maps = this.mapsLib
+      const center = this.initialCenter
+      const map = new maps.Map(this.$refs.canvas, { center, zoom: 16 })
+      const markerOptions = { position: center, map }
       if (this.marker) markerOptions.draggable = true
       const pin = new maps.Marker(markerOptions)
       map.addListener('click', (event) => this.place(event.latLng.lat(), event.latLng.lng()))
@@ -100,15 +111,15 @@ export default {
       this.pin = pin
       this.ready = true
     },
-    // 使用者任何一種操作都收斂到這一處：更新圖釘並往上回報座標。
+    // 使用者任何一種操作都收斂到這一處；未錨定或未就緒時一律不發出座標。
     place(lat, lng) {
-      if (this.map && this.pin && typeof lat === 'number' && typeof lng === 'number') {
-        this.pin.setPosition({ lat, lng })
-      }
+      if (!this.ready || !this.hasAnchor) return
+      if (typeof lat !== 'number' || typeof lng !== 'number') return
+      if (this.pin) this.pin.setPosition({ lat, lng })
       this.$emit('pick', lat, lng)
     },
     onKeydown(event) {
-      if (!this.ready) return
+      if (!this.ready || !this.pin) return
       const moves = {
         ArrowUp: [STEP, 0],
         ArrowDown: [-STEP, 0],
@@ -116,13 +127,13 @@ export default {
         ArrowRight: [0, STEP],
       }
       const move = moves[event.key]
-      if (!move) return
+      const base = this.pin.getPosition()
+      if (!move || !base) return
       event.preventDefault()
-      const base = (this.pin && this.pin.getPosition()) || this.initialCenter
       this.place(base.lat() + move[0], base.lng() + move[1])
     },
     recenter() {
-      if (!this.map || typeof this.lat !== 'number' || typeof this.lng !== 'number') return
+      if (!this.ready || !this.hasAnchor) return
       const center = { lat: this.lat, lng: this.lng }
       this.map.setCenter(center)
       if (this.pin) this.pin.setPosition(center)

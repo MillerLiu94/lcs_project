@@ -64,11 +64,13 @@ export default {
     canDescribe() {
       return this.situation === 'map' || this.situation === 'confirm'
     },
-    // 地圖初始中心：已選位置優先，其次第一個有座標的候選。
+    // 地圖錨點：已選位置 → 有座標的候選 → 目前定位（GPS）。找不到則空物件。
     anchor() {
       if (this.selected) return this.selected
       const candidate = this.candidates[0]
-      return candidate && typeof candidate.lat === 'number' ? candidate : {}
+      if (candidate && typeof candidate.lat === 'number') return candidate
+      const current = this.$store.state.location.current
+      return current && typeof current.lat === 'number' ? current : {}
     },
     prompt() {
       if (this.situation === 'text') return '沒關係，說個大概就好，例如「中華路全家旁邊」。'
@@ -156,17 +158,6 @@ export default {
   justify-content: space-between;
   gap: 1rem;
 }
-.location__prompt {
-  margin: 0;
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--foreground);
-}
-.location__preview {
-  margin: 0;
-  font-size: 1.125rem;
-  color: var(--foreground);
-}
 .location button {
   min-height: 56px;
   padding: 0.75rem 1.5rem;
@@ -176,27 +167,15 @@ export default {
   font-weight: 700;
   cursor: pointer;
 }
-.location__back {
-  background: none;
-  border: none;
-  color: var(--foreground);
-}
-.location__skip {
-  background: none;
-  border: 2px solid var(--input);
-  color: var(--foreground);
-}
+.location__prompt { margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--foreground); }
+.location__preview { margin: 0; font-size: 1.125rem; color: var(--foreground); }
+.location__back { background: none; border: none; color: var(--foreground); }
+.location__skip { background: none; border: 2px solid var(--input); color: var(--foreground); }
 .location__stack button:not(.location__skip) {
   background: var(--primary);
   color: var(--primary-foreground);
   border: 2px solid var(--primary);
 }
-.location button:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-.location button:focus-visible {
-  outline: 3px solid var(--ring);
-  outline-offset: 2px;
-}
+.location button:disabled { cursor: not-allowed; opacity: 0.55; }
+.location button:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
 </style>
