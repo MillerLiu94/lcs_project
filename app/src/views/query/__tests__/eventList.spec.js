@@ -142,4 +142,46 @@ describe('EventListView（P5 查詢目前事件）', () => {
     expect(w.findComponent({ name: 'ErrorAlert' }).exists()).toBe(true)
     expect(w.text()).toContain('網路有點問題，請再試一次。')
   })
+
+  const LOCATED = [
+    { id: 'e-001', title: '有座標A', timeText: '今天', placeText: '中華路', status: 'reported', coordinates: { lat: 25.0455, lng: 121.509 } },
+    { id: 'e-003', title: '有座標B', timeText: '今天', placeText: '汀州路', status: 'reported', coordinates: { lat: 25.0237, lng: 121.521 } },
+    { id: 'e-004', title: '無座標C', timeText: '前天', placeText: '青年公園', status: 'reported', coordinates: null },
+  ]
+
+  test('有座標者加編號、無座標者列最後並標示', async () => {
+    vi.spyOn(eventService, 'list').mockResolvedValue(LOCATED)
+    const w = mountView(makeStore())
+    await flush()
+    const badges = w.findAll('[data-event-num]').wrappers.map((n) => n.text())
+    expect(badges).toEqual(['1', '2'])
+    expect(w.text()).toContain('位置未標示')
+    const cards = w.findAll('.events__item').wrappers.map((c) => c.text())
+    expect(cards[cards.length - 1]).toContain('無座標C')
+  })
+
+  test('EventMap 只收到有座標的事件', async () => {
+    vi.spyOn(eventService, 'list').mockResolvedValue(LOCATED)
+    const w = mount(EventListView, {
+      localVue,
+      store: makeStore(),
+      stubs: { RouterLink: RouterLinkStub, EventMap: true },
+    })
+    await flush()
+    const map = w.findComponent({ name: 'EventMap' })
+    expect(map.props('events').map((e) => e.id)).toEqual(['e-001', 'e-003'])
+  })
+
+  test('EventMap 選取事件時，對應卡片標記為選中', async () => {
+    vi.spyOn(eventService, 'list').mockResolvedValue(LOCATED)
+    const w = mount(EventListView, {
+      localVue,
+      store: makeStore(),
+      stubs: { RouterLink: RouterLinkStub, EventMap: true },
+    })
+    await flush()
+    w.findComponent({ name: 'EventMap' }).vm.$emit('select', 'e-003')
+    await flush()
+    expect(w.find('.events__card--selected').text()).toContain('有座標B')
+  })
 })

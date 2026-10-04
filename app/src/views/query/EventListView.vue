@@ -42,23 +42,51 @@
       </template>
     </EmptyState>
 
-    <ul v-else class="events__list">
-      <li v-for="event in events" :key="event.id" class="events__item">
-        <router-link class="events__card" :to="{ name: 'event-detail', params: { id: event.id } }">
-          <ResultCard
-            :title="event.title"
-            :date-text="event.timeText"
-            :place-text="event.placeText"
-            :badge="statusText(event.status)"
-          />
-        </router-link>
-      </li>
-    </ul>
+    <div v-else class="events__layout">
+      <EventMap
+        :events="locatedEvents"
+        :selected-id="selectedId"
+        @select="selectedId = $event"
+      />
+
+      <ul class="events__list">
+        <li v-for="(event, index) in locatedEvents" :key="event.id" class="events__item">
+          <router-link
+            class="events__card"
+            :class="{ 'events__card--selected': selectedId === event.id }"
+            :to="{ name: 'event-detail', params: { id: event.id } }"
+          >
+            <span class="events__num" data-event-num>{{ index + 1 }}</span>
+            <ResultCard
+              :title="event.title"
+              :date-text="event.timeText"
+              :place-text="event.placeText"
+              :badge="statusText(event.status)"
+            />
+          </router-link>
+        </li>
+        <li v-for="event in unlocatedEvents" :key="event.id" class="events__item">
+          <router-link
+            class="events__card"
+            :to="{ name: 'event-detail', params: { id: event.id } }"
+          >
+            <span class="events__nolocation">位置未標示</span>
+            <ResultCard
+              :title="event.title"
+              :date-text="event.timeText"
+              :place-text="event.placeText"
+              :badge="statusText(event.status)"
+            />
+          </router-link>
+        </li>
+      </ul>
+    </div>
   </section>
 </template>
 
 <script>
 import ResultCard from '../../components/ResultCard.vue'
+import EventMap from '../../components/EventMap.vue'
 import EmptyState from '../../components/EmptyState.vue'
 import ErrorAlert from '../../components/ErrorAlert.vue'
 
@@ -69,11 +97,22 @@ function chipList(values) {
   return values.map((value) => ({ value, label: value }))
 }
 
+// 只有事件資料本身帶真實座標才算「有位置」；缺漏一律視為無座標。
+function hasCoordinates(event) {
+  return Boolean(
+    event &&
+      event.coordinates &&
+      typeof event.coordinates.lat === 'number' &&
+      typeof event.coordinates.lng === 'number',
+  )
+}
+
 export default {
   name: 'EventListView',
-  components: { ResultCard, EmptyState, ErrorAlert },
+  components: { ResultCard, EventMap, EmptyState, ErrorAlert },
   data() {
     return {
+      selectedId: null,
       statusTextMap: STATUS_TEXT,
       groups: [
         {
@@ -109,6 +148,13 @@ export default {
     },
     events() {
       return this.$store.state.query.events
+    },
+    locatedEvents() {
+      return this.events.filter(hasCoordinates)
+    },
+    unlocatedEvents() {
+      const located = this.locatedEvents
+      return this.events.filter((event) => !located.includes(event))
     },
     loading() {
       return this.$store.state.query.loading
@@ -175,16 +221,51 @@ export default {
   border: 1px solid var(--border);
   border-radius: var(--radius-pill);
   font: inherit;
-  font-size: 1rem;
+  font-size: var(--font-size-meta);
   cursor: pointer;
 }
 .events__chip--on { background: var(--primary); color: var(--primary-foreground); border-color: var(--primary); font-weight: 700; }
 .events__status { margin: 0; color: var(--muted-foreground); }
+
+/* 地圖＋清單：手機單欄（地圖在上），桌面兩欄（地圖左、清單右）。 */
+.events__layout { display: flex; flex-direction: column; gap: 1rem; }
 .events__list { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
 .events__item { min-width: 0; }
-/* Desktop enhancement (G6): two-column event results at 1024+. */
-@media (min-width: 1024px) { .events__list { grid-template-columns: repeat(2, 1fr); } }
-.events__card { display: flex; flex-direction: column; gap: 0.5rem; color: inherit; text-decoration: none; }
+.events__card { display: flex; align-items: flex-start; gap: 0.5rem; color: inherit; text-decoration: none; }
+.events__card > :last-child { flex: 1; min-width: 0; }
+.events__num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-top: 0.25rem;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: var(--font-size-meta);
+  font-weight: 800;
+}
+.events__nolocation {
+  flex: none;
+  margin-top: 0.6rem;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-meta);
+  white-space: nowrap;
+}
+.events__card--selected {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-card);
+}
 .events button:focus-visible,
 .events a:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; border-radius: var(--radius); }
+
+/* Desktop：地圖左（sticky）、清單右（單欄）。 */
+@media (min-width: 1024px) {
+  .events__layout { display: grid; grid-template-columns: 45% 1fr; gap: 1.5rem; align-items: start; }
+  .events__layout :deep(.event-map__canvas) { position: sticky; top: 5rem; }
+  .events__list { grid-template-columns: 1fr; }
+}
 </style>
