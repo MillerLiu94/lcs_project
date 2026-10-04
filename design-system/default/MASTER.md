@@ -1,5 +1,9 @@
 # Design System Master File
 
+> ⚠️ **DEPRECATED**：本檔的 navy 藍配色（`#0F172A` / `#0369A1`）已不採用。
+> 全站視覺以 `Session5_設計方向_Firefox風格.md` 與 `design-system/firefox-acorn/` 的暖色 token 為準。
+> 入口體驗的版面基準見 `docs/superpowers/specs/2026-10-05-entry-experience-baseline-design.md`。
+
 > **LOGIC:** When building a specific page, first check `design-system/pages/[page-name].md`.
 > If that file exists, its rules **override** this Master file.
 > If not, strictly follow the rules below.
