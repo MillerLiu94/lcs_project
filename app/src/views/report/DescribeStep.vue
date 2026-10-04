@@ -1,7 +1,7 @@
 <template>
   <section class="describe">
     <header class="describe__header">
-      <button class="describe__back" type="button" @click="goBack">← 上一步</button>
+      <button class="describe__back" type="button" @click="goBack"><i class="el-icon-arrow-left" aria-hidden="true" /> 上一步</button>
       <StepIndicator :current="1" :total="3" />
     </header>
 
@@ -17,7 +17,7 @@
         @voice="text = $event"
       />
 
-      <p class="describe__hint">💡 不用寫地址，說你看到的就好</p>
+      <p class="describe__hint"><i class="el-icon-info" aria-hidden="true" /> 不用寫地址，說你看到的就好</p>
     </form>
   </section>
 </template>

@@ -7,35 +7,32 @@ import ArrowLeft from '../ArrowLeft.vue'
 import Calendar from '../Calendar.vue'
 import Microphone from '../Microphone.vue'
 
-test('House 輸出 svg 且預設 24px', () => {
-  const w = shallowMount(House)
-  expect(w.find('svg').exists()).toBe(true)
-  expect(w.find('svg').attributes('width')).toBe('24')
-})
+const ICONS = {
+  House: [House, 'el-icon-house'],
+  Flag: [Flag, 'el-icon-s-flag'],
+  MapPin: [MapPin, 'el-icon-location'],
+  Gift: [Gift, 'el-icon-present'],
+  ArrowLeft: [ArrowLeft, 'el-icon-arrow-left'],
+  Calendar: [Calendar, 'el-icon-date'],
+  Microphone: [Microphone, 'el-icon-microphone'],
+}
 
-const ICONS = { House, Flag, MapPin, Gift, ArrowLeft, Calendar, Microphone }
-
-describe.each(Object.entries(ICONS))('%s 線性圖示', (_name, Icon) => {
-  test('使用 24px viewBox 且為線性樣式', () => {
-    const svg = shallowMount(Icon).find('svg')
-    expect(svg.attributes('viewBox')).toBe('0 0 24 24')
-    expect(svg.attributes('fill')).toBe('none')
-    expect(svg.attributes('stroke')).toBe('currentColor')
-    expect(svg.attributes('stroke-width')).toBe('1.75')
+describe.each(Object.entries(ICONS))('%s 使用 Element UI icon', (_name, [Icon, className]) => {
+  test('輸出對應的 el-icon class', () => {
+    const i = shallowMount(Icon).find('i')
+    expect(i.exists()).toBe(true)
+    expect(i.classes()).toContain(className)
   })
 
-  test('預設尺寸為 24，且可依 size prop 調整', () => {
-    expect(shallowMount(Icon).find('svg').attributes('width')).toBe('24')
+  test('預設 24px，且可依 size prop 調整', () => {
+    expect(shallowMount(Icon).find('i').attributes('style')).toContain('font-size: 24px')
     const w = shallowMount(Icon, { propsData: { size: 32 } })
-    expect(w.find('svg').attributes('width')).toBe('32')
-    expect(w.find('svg').attributes('height')).toBe('32')
+    expect(w.find('i').attributes('style')).toContain('font-size: 32px')
   })
 
   test('aria-hidden 由使用端決定', () => {
-    expect(
-      shallowMount(Icon).find('svg').attributes('aria-hidden')
-    ).toBeUndefined()
+    expect(shallowMount(Icon).find('i').attributes('aria-hidden')).toBeUndefined()
     const w = shallowMount(Icon, { attrs: { 'aria-hidden': 'true' } })
-    expect(w.find('svg').attributes('aria-hidden')).toBe('true')
+    expect(w.find('i').attributes('aria-hidden')).toBe('true')
   })
 })

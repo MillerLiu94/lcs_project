@@ -1,7 +1,7 @@
 <template>
   <section class="location">
     <header class="location__header">
-      <button type="button" class="location__back" @click="goBack">← 上一步</button>
+      <button type="button" class="location__back" @click="goBack"><i class="el-icon-arrow-left" aria-hidden="true" /> 上一步</button>
       <StepIndicator :current="2" :total="3" />
     </header>
 

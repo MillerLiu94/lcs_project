@@ -1,7 +1,7 @@
 <template>
   <section class="confirm">
     <header class="confirm__header">
-      <button type="button" class="confirm__back" @click="goBack">← 上一步</button>
+      <button type="button" class="confirm__back" @click="goBack"><i class="el-icon-arrow-left" aria-hidden="true" /> 上一步</button>
       <StepIndicator :current="3" :total="3" />
     </header>
 
