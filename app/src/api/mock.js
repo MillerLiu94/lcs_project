@@ -1,5 +1,7 @@
 import MockAdapter from 'axios-mock-adapter'
 import { classifyText } from '../services/intentRules'
+import { scorePlaces } from '../services/placeScoring'
+import places from '../mocks/places.json'
 
 // 單一 mock adapter 實例（idempotent），僅供開發／測試使用。
 let mock = null
@@ -27,7 +29,15 @@ function registerIntent(adapter) {
   })
 }
 
-const REGISTRATIONS = [registerHealth, registerIntent]
+function registerPlaces(adapter) {
+  // 不帶 q 時回傳地點目錄；帶 q 時以同一套純計分回傳候選。
+  adapter.onGet('/api/places').reply((config) => {
+    const q = config.params && config.params.q
+    return [200, q ? scorePlaces(q) : places]
+  })
+}
+
+const REGISTRATIONS = [registerHealth, registerIntent, registerPlaces]
 
 function registerAll(adapter) {
   REGISTRATIONS.forEach((register) => register(adapter))
