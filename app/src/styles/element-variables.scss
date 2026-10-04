@@ -1,0 +1,30 @@
+// =============================================================================
+// Element UI 2.x theme — Firefox / Acorn warm tokens
+// -----------------------------------------------------------------------------
+// Element UI uses SCSS variables with `!default`. Declaring our values BEFORE
+// importing theme-chalk makes every derived shade (light-1..light-9, hover,
+// borders) regenerate from the warm primary automatically.
+// =============================================================================
+
+// Warm CTA (5.95:1 on white -> safe for normal text + button fills)
+$--color-primary: #a44900;
+
+// Nova-style rounding + elderly-friendly base type / target sizes
+$--border-radius-base: 12px;
+$--font-size-base: 18px;
+$--input-height: 48px;
+$--input-medium-height: 48px;
+$--input-small-height: 44px;
+
+// Icon fonts live in `public/element-ui-fonts` so Vite serves them from the root.
+// (The default `fonts` path is relative to theme-chalk's node_modules source,
+// which Vite does not rebase for dependency stylesheets.)
+$--font-path: '/element-ui-fonts';
+
+// Warm ink / borders so Element controls blend with the Firefox theme
+$--color-text-primary: #15141a;
+$--color-text-regular: #3a3944;
+$--border-color-base: #e7e2dc;
+
+// Full theme-chalk build, resolved from node_modules by Vite's Sass importer.
+@import "element-ui/packages/theme-chalk/src/index";

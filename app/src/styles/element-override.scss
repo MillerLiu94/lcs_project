@@ -1,0 +1,70 @@
+// =============================================================================
+// Element UI overrides + elderly-friendly base styles
+// -----------------------------------------------------------------------------
+// Loaded AFTER element-variables.scss (which rebuilds the full theme-chalk).
+// Uses the shared CSS custom properties from tokens.css so Element controls stay
+// in sync with the Firefox / Acorn warm theme.
+// =============================================================================
+
+/* Elderly-friendly base typography (G4: body >=18px, line-height >=1.7) */
+html {
+  font-size: 18px;
+}
+body {
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+/* Keep focused controls clear of the fixed bottom nav (G6) */
+* {
+  scroll-padding-bottom: 5.5rem;
+}
+
+/* Visible keyboard focus using the theme ring token (G4) */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Buttons: >=48px targets, warm CTA fill (never #FF7139 behind text) */
+.el-button {
+  min-height: 48px;
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+.el-button--primary {
+  min-height: 52px;
+  background-color: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-foreground);
+}
+.el-button--primary:hover,
+.el-button--primary:focus {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  color: var(--primary-foreground);
+}
+.el-button--primary:active {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+.el-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* Inputs / textareas: >=48px tall, readable, 12px radius */
+.el-input__inner,
+.el-textarea__inner {
+  border-radius: var(--radius);
+  font-size: 1rem;
+}
+.el-textarea__inner {
+  min-height: 5rem;
+}
+
+/* Warm focus feedback on form fields */
+.el-input__inner:focus,
+.el-textarea__inner:focus {
+  border-color: var(--primary);
+}
