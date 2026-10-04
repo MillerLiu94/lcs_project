@@ -7,7 +7,7 @@
 
     <ul class="top-nav__list">
       <li
-        v-for="item in NAV_ITEMS"
+        v-for="item in DESKTOP_NAV_ITEMS"
         :key="item.to"
         class="top-nav__item"
         data-nav-item
@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { NAV_ITEMS } from '../router'
+import { DESKTOP_NAV_ITEMS } from '../router'
 import Flag from './icons/Flag.vue'
 import Gift from './icons/Gift.vue'
 import House from './icons/House.vue'
@@ -33,7 +33,7 @@ const ICONS = { Flag, Gift, House, MapPin }
 export default {
   name: 'TopNav',
   data() {
-    return { NAV_ITEMS }
+    return { DESKTOP_NAV_ITEMS }
   },
   methods: {
     iconFor(name) {

@@ -16,16 +16,23 @@ import MyReportsView from '../views/my/MyReportsView.vue'
 
 Vue.use(VueRouter)
 
+// 三大功能改由引導式對話進入（首頁卡片與手機底部導覽都用這份）。
 export const NAV_ITEMS = [
-  { to: '/report', label: '回報問題', icon: 'Flag' },
-  { to: '/events', label: '附近事件', icon: 'MapPin' },
-  { to: '/welfare', label: '福利活動', icon: 'Gift' },
+  { to: '/assistant/report', label: '回報問題', icon: 'Flag' },
+  { to: '/assistant/events', label: '附近事件', icon: 'MapPin' },
+  { to: '/assistant/welfare', label: '福利活動', icon: 'Gift' },
 ]
 
 // 手機導覽多了回首頁的路徑；桌面版品牌本身就是回首頁，故不重複。
 export const MOBILE_NAV_ITEMS = [
   { to: '/', label: '首頁', icon: 'House' },
   ...NAV_ITEMS,
+]
+
+// 桌面頂部導覽：不重複三大功能（改由首頁卡片進入），改放總覽與我的回報。
+export const DESKTOP_NAV_ITEMS = [
+  { to: '/events', label: '事件總覽', icon: 'MapPin' },
+  { to: '/my-reports', label: '我的回報', icon: 'Flag' },
 ]
 
 const routes = [
