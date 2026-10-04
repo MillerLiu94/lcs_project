@@ -1,6 +1,9 @@
 <template>
   <article class="result-card">
-    <h3 class="result-card__title">{{ title }}</h3>
+    <div class="result-card__head">
+      <h3 class="result-card__title">{{ title }}</h3>
+      <span v-if="badge" class="result-card__badge">{{ badge }}</span>
+    </div>
 
     <dl v-if="dateText || placeText" class="result-card__meta">
       <div v-if="dateText" class="result-card__meta-item">
@@ -53,6 +56,7 @@ export default {
     source: { type: String, default: '' },
     publishedAt: { type: String, default: '' },
     url: { type: String, default: '' },
+    badge: { type: String, default: '' },
   },
 }
 </script>
@@ -69,12 +73,30 @@ export default {
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-float);
 }
+.result-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
 .result-card__title {
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0;
   font-size: 1.375rem;
   font-weight: 700;
   line-height: 1.4;
   overflow-wrap: anywhere;
+}
+.result-card__badge {
+  flex: none;
+  align-self: flex-start;
+  padding: 0.25rem 0.75rem;
+  background: var(--muted);
+  color: var(--foreground);
+  border-radius: var(--radius-pill);
+  font-size: 1rem;
+  white-space: nowrap;
 }
 .result-card__meta {
   display: flex;

@@ -49,8 +49,8 @@
             :title="event.title"
             :date-text="event.timeText"
             :place-text="event.placeText"
+            :badge="statusText(event.status)"
           />
-          <span class="events__badge">{{ statusText(event.status) }}</span>
         </router-link>
       </li>
     </ul>
@@ -185,14 +185,6 @@ export default {
 /* Desktop enhancement (G6): two-column event results at 1024+. */
 @media (min-width: 1024px) { .events__list { grid-template-columns: repeat(2, 1fr); } }
 .events__card { display: flex; flex-direction: column; gap: 0.5rem; color: inherit; text-decoration: none; }
-.events__badge {
-  align-self: flex-start;
-  padding: 0.25rem 0.75rem;
-  background: var(--muted);
-  color: var(--foreground);
-  border-radius: var(--radius-pill);
-  font-size: 1rem;
-}
 .events button:focus-visible,
 .events a:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; border-radius: var(--radius); }
 </style>

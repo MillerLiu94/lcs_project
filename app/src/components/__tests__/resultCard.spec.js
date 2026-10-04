@@ -11,6 +11,19 @@ test('ResultCard 顯示來源與原始連結', () => {
   expect(w.find('a[href="https://x"]').exists()).toBe(true)
 })
 
+test('ResultCard 在標題列顯示 badge', () => {
+  const w = mount(ResultCard, { propsData: { title: '路燈故障', badge: '處理中' } })
+  const badge = w.find('.result-card__badge')
+  expect(badge.exists()).toBe(true)
+  expect(badge.text()).toBe('處理中')
+  expect(w.find('.result-card__head').exists()).toBe(true)
+})
+
+test('ResultCard 沒有 badge 時不渲染標籤', () => {
+  const w = mount(ResultCard, { propsData: { title: '活動' } })
+  expect(w.find('.result-card__badge').exists()).toBe(false)
+})
+
 describe('ResultCard', () => {
   test('原始連結以新分頁開啟並帶安全 rel', () => {
     const w = mount(ResultCard, { propsData: { title: '活動', url: 'https://x' } })
