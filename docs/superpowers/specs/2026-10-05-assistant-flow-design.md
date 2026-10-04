@@ -23,6 +23,8 @@
 - 新增任務腳本資料 `services/assistantScripts.js`（步驟與接手動作以資料描述）。
 - 首頁三張 `BigTaskCard` 改連到對話頁（`/assistant/report` 等）。
 - 問完的答案寫入對應 store，並導向既有流程／結果。
+- **桌面 `TopNav`**：移除「回報問題／附近事件／福利活動」三個項目，只保留品牌。
+- **手機 `BottomNav`**：三個功能項（回報／事件／福利）改為觸發對應對話（連到 `/assistant/:task`），保留「首頁」。
 
 ### 2.2 排除（Out of scope，後續另案）
 - 真 LLM／多輪自由聊天。
@@ -94,6 +96,11 @@
   - **現況**：只做**單一意圖分流**（申報／查詢／福利），無法判斷時進 `ClarifyView` 釐清；尚未支援複合需求。
   - **本次不變更輸入列**；複合需求（多意圖分流與結果整合）列為後續（§8）。
 
+### 4.7 導覽調整
+- **桌面 `TopNav`**：移除「回報問題／附近事件／福利活動」三個項目，只保留品牌（logo + 名稱，點擊回首頁）。三大功能改由首頁卡片（與手機底部導覽）進入對話。
+- **手機 `BottomNav`**：保留「首頁」；「回報問題／附近事件／福利活動」三項改為連到 `/assistant/:task`（點擊即開始該任務對話）。
+- 既有頁面路由（`/report`、`/events`、`/welfare`）不變，仍為對話的接手目標與直接連結（例如空狀態的「回報一個問題」）。
+
 ---
 
 ## 5. 技術決策
@@ -108,9 +115,11 @@
 
 - Create：`app/src/views/assistant/AssistantView.vue`
 - Create：`app/src/services/assistantScripts.js`
-- Modify：`app/src/router/index.js`（新增 `/assistant/:task`）
+- Modify：`app/src/router/index.js`（新增 `/assistant/:task`；`MOBILE_NAV_ITEMS` 的 to 改為對話頁）
 - Modify：`app/src/views/home/HomeView.vue`（卡片改連對話頁）
-- Create／Modify：對應測試（`assistantScripts.spec.js`、`assistantView.spec.js`、`homeView.spec.js`）
+- Modify：`app/src/components/TopNav.vue`（移除三個導覽項目，只留品牌）
+- Modify：`app/src/components/BottomNav.vue`（三項改觸發對話）
+- Create／Modify：對應測試（`assistantScripts.spec.js`、`assistantView.spec.js`、`homeView.spec.js`、`nav.spec.js`）
 
 ---
 
@@ -120,6 +129,8 @@
 - [ ] 一問一答：一次顯示一個問題；選項題為大按鈕、文字題可打字。
 - [ ] 完成後接手正確流程：回報→選位置；事件→已套篩選的清單；福利→已搜尋的結果。
 - [ ] 無效的 `:task` 導回首頁，不報錯。
+- [ ] 桌面頂部導覽不再顯示三個功能項，只保留品牌（點擊回首頁）。
+- [ ] 手機底部導覽「回報／事件／福利」三項點擊後開始對應對話；「首頁」仍可回首頁。
 - [ ] 畫面不出現 Agent／AI／API 等技術詞（G5）。
 - [ ] 鍵盤可完成整個對話；焦點在步驟切換後不遺失。
 - [ ] 既有測試維持通過；`npm run build` 成功。
