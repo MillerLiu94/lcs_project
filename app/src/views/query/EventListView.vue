@@ -51,33 +51,44 @@
 
       <ul class="events__list">
         <li v-for="(event, index) in locatedEvents" :key="event.id" class="events__item">
-          <router-link
-            class="events__card"
-            :class="{ 'events__card--selected': selectedId === event.id }"
-            :to="{ name: 'event-detail', params: { id: event.id } }"
-          >
-            <span class="events__num" data-event-num>{{ index + 1 }}</span>
-            <ResultCard
-              :title="event.title"
-              :date-text="event.timeText"
-              :place-text="event.placeText"
-              :badge="statusText(event.status)"
-            />
-          </router-link>
+          <div class="events__card" :class="{ 'events__card--selected': selectedId === event.id }">
+            <button
+              type="button"
+              class="events__num"
+              data-event-num
+              :aria-label="`在地圖上顯示：${event.title}`"
+              @click="selectedId = event.id"
+            >
+              {{ index + 1 }}
+            </button>
+            <router-link
+              class="events__link"
+              :to="{ name: 'event-detail', params: { id: event.id } }"
+            >
+              <ResultCard
+                :title="event.title"
+                :date-text="event.timeText"
+                :place-text="event.placeText"
+                :badge="statusText(event.status)"
+              />
+            </router-link>
+          </div>
         </li>
         <li v-for="event in unlocatedEvents" :key="event.id" class="events__item">
-          <router-link
-            class="events__card"
-            :to="{ name: 'event-detail', params: { id: event.id } }"
-          >
+          <div class="events__card">
             <span class="events__nolocation">位置未標示</span>
-            <ResultCard
-              :title="event.title"
-              :date-text="event.timeText"
-              :place-text="event.placeText"
-              :badge="statusText(event.status)"
-            />
-          </router-link>
+            <router-link
+              class="events__link"
+              :to="{ name: 'event-detail', params: { id: event.id } }"
+            >
+              <ResultCard
+                :title="event.title"
+                :date-text="event.timeText"
+                :place-text="event.placeText"
+                :badge="statusText(event.status)"
+              />
+            </router-link>
+          </div>
         </li>
       </ul>
     </div>
@@ -172,6 +183,20 @@ export default {
         : '目前附近沒有已回報的事件。'
     },
   },
+  watch: {
+    // 由地圖（圖釘）或卡片編號選取時，把對應卡片捲入視野。
+    selectedId() {
+      this.$nextTick(() => {
+        const el =
+          this.$el && this.$el.querySelector
+            ? this.$el.querySelector('.events__card--selected')
+            : null
+        if (el && typeof el.scrollIntoView === 'function') {
+          el.scrollIntoView({ block: 'nearest', behavior: 'auto' })
+        }
+      })
+    },
+  },
   created() {
     // 由萬用輸入帶著原話前來（?q=）：套用辨識出的類型／地區後載入。
     const q = (this.$route && this.$route.query && this.$route.query.q) || ''
@@ -231,22 +256,28 @@ export default {
 .events__layout { display: flex; flex-direction: column; gap: 1rem; }
 .events__list { display: grid; gap: 1rem; margin: 0; padding: 0; list-style: none; }
 .events__item { min-width: 0; }
-.events__card { display: flex; align-items: flex-start; gap: 0.5rem; color: inherit; text-decoration: none; }
-.events__card > :last-child { flex: 1; min-width: 0; }
+.events__card { display: flex; align-items: flex-start; gap: 0.5rem; }
+.events__link { flex: 1; min-width: 0; color: inherit; text-decoration: none; }
 .events__num {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   margin-top: 0.25rem;
+  padding: 0;
+  border: none;
   border-radius: var(--radius-pill);
   background: var(--primary);
   color: var(--primary-foreground);
+  font: inherit;
   font-size: var(--font-size-meta);
   font-weight: 800;
+  cursor: pointer;
 }
+.events__num:hover { background: var(--primary-hover); }
+.events__num:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
 .events__nolocation {
   flex: none;
   margin-top: 0.6rem;
@@ -254,18 +285,19 @@ export default {
   font-size: var(--font-size-meta);
   white-space: nowrap;
 }
+/* 選取態：用高對比的主要色（--accent 太淡，僅 1.19:1）。 */
 .events__card--selected {
-  outline: 3px solid var(--accent);
+  outline: 3px solid var(--primary);
   outline-offset: 2px;
   border-radius: var(--radius-card);
 }
 .events button:focus-visible,
 .events a:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; border-radius: var(--radius); }
 
-/* Desktop：地圖左（sticky）、清單右（單欄）。 */
+/* Desktop：地圖左（sticky 於 grid item 本身）、清單右（單欄）。 */
 @media (min-width: 1024px) {
   .events__layout { display: grid; grid-template-columns: 45% 1fr; gap: 1.5rem; align-items: start; }
-  .events__layout :deep(.event-map__canvas) { position: sticky; top: 5rem; }
+  .events__layout :deep(.event-map) { position: sticky; top: 5rem; align-self: start; }
   .events__list { grid-template-columns: 1fr; }
 }
 </style>

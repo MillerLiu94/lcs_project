@@ -8,13 +8,33 @@ function mapsOrNull() {
 }
 
 /**
+ * 是否應注入 Google Maps script（純函式，方便測試）。
+ * @returns {boolean}
+ */
+export function shouldInject({ key, mode, hasDocument, hasGoogle }) {
+  if (hasGoogle) return false
+  if (!hasDocument) return false
+  // 測試模式一律不注入，避免本機 .env.local 的金鑰污染測試。
+  if (mode === 'test') return false
+  if (!key) return false
+  return true
+}
+
+/**
  * 載入 Google Maps JavaScript API。
- * @returns {Promise<object|null>} window.google.maps；無 window.google 且無金鑰時為 null。
+ * @returns {Promise<object|null>} window.google.maps；無 window.google 且不需注入時為 null。
  */
 export function loadGoogleMaps() {
   const ready = mapsOrNull()
   if (ready) return Promise.resolve(ready)
-  if (typeof document === 'undefined' || !KEY) return Promise.resolve(null)
+
+  const inject = shouldInject({
+    key: KEY,
+    mode: import.meta.env && import.meta.env.MODE,
+    hasDocument: typeof document !== 'undefined',
+    hasGoogle: typeof window !== 'undefined' && Boolean(window.google),
+  })
+  if (!inject) return Promise.resolve(null)
 
   return new Promise((resolve) => {
     const script = document.createElement('script')
@@ -27,5 +47,3 @@ export function loadGoogleMaps() {
     document.head.appendChild(script)
   })
 }
-
-export default { loadGoogleMaps }

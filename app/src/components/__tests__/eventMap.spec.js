@@ -18,9 +18,11 @@ function installGoogleMaps() {
     }
     addListener(name, cb) { this.listeners[name] = cb }
     setMap(map) { this.map = map }
+    setIcon(icon) { this.icon = icon }
+    setZIndex(z) { this.zIndex = z }
     getPosition() { return this.position }
   }
-  window.google = { maps: { Map: FakeMap, Marker: FakeMarker } }
+  window.google = { maps: { Map: FakeMap, Marker: FakeMarker, SymbolPath: { CIRCLE: 0 } } }
   return { created }
 }
 
@@ -63,5 +65,14 @@ describe('EventMap', () => {
     await w.setProps({ events: [EVENTS[0]] })
     await settle()
     expect(w.vm.marks.map((m) => m.id)).toEqual(['e-001'])
+  })
+
+  test('選取的事件圖釘被高亮（比其他圖釘大）', async () => {
+    installGoogleMaps()
+    const w = mount(EventMap, { propsData: { events: EVENTS, selectedId: 'e-003' } })
+    await settle()
+    const selected = w.vm.marks.find((m) => m.id === 'e-003').marker
+    const other = w.vm.marks.find((m) => m.id === 'e-001').marker
+    expect(selected.icon.scale).toBeGreaterThan(other.icon.scale)
   })
 })

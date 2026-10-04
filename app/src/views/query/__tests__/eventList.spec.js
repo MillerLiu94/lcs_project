@@ -1,8 +1,12 @@
+import fs from 'node:fs'
 import { createLocalVue, mount } from '@vue/test-utils'
 import Vuex from 'vuex'
 import EventListView from '../EventListView.vue'
 import query from '../../../store/modules/query'
 import eventService from '../../../services/eventService'
+
+// 動態組路徑（同其他樣式守門）：避免 Vite 改寫 new URL 的相對路徑。
+const viewSrc = fs.readFileSync(new URL(['..', 'EventListView.vue'].join('/'), import.meta.url), 'utf8')
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
@@ -183,5 +187,46 @@ describe('EventListView（P5 查詢目前事件）', () => {
     w.findComponent({ name: 'EventMap' }).vm.$emit('select', 'e-003')
     await flush()
     expect(w.find('.events__card--selected').text()).toContain('有座標B')
+  })
+
+  test('點卡片編號會選取對應事件（連動地圖）', async () => {
+    vi.spyOn(eventService, 'list').mockResolvedValue(LOCATED)
+    const w = mount(EventListView, {
+      localVue,
+      store: makeStore(),
+      stubs: { RouterLink: RouterLinkStub, EventMap: true },
+    })
+    await flush()
+    await w.findAll('[data-event-num]').at(1).trigger('click')
+    expect(w.findComponent({ name: 'EventMap' }).props('selectedId')).toBe('e-003')
+  })
+
+  test('選取事件後會將對應卡片捲入視野', async () => {
+    const spy = vi.fn()
+    Element.prototype.scrollIntoView = spy
+    vi.spyOn(eventService, 'list').mockResolvedValue(LOCATED)
+    const w = mount(EventListView, {
+      localVue,
+      store: makeStore(),
+      stubs: { RouterLink: RouterLinkStub, EventMap: true },
+    })
+    await flush()
+    w.findComponent({ name: 'EventMap' }).vm.$emit('select', 'e-003')
+    await flush()
+    await flush()
+    expect(spy).toHaveBeenCalled()
+    delete Element.prototype.scrollIntoView
+  })
+
+  test('選取態使用高對比的主要色（非 --accent）', () => {
+    const block = viewSrc.match(/\.events__card--selected\s*\{[^}]*\}/)
+    expect(block).toBeTruthy()
+    expect(block[0]).toContain('var(--primary)')
+  })
+
+  test('桌機 sticky 套在地圖容器本身', () => {
+    const block = viewSrc.match(/:deep\(\.event-map\)\s*\{[^}]*\}/)
+    expect(block).toBeTruthy()
+    expect(block[0]).toContain('sticky')
   })
 })

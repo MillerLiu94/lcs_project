@@ -36,9 +36,10 @@ export default {
     events() {
       if (this.ready) this.renderMarks()
     },
-    selectedId(id) {
+    selectedId() {
       if (!this.ready || !this.map) return
-      const mark = this.marks.find((m) => m.id === id)
+      this.applySelection()
+      const mark = this.marks.find((m) => m.id === this.selectedId)
       if (mark && typeof mark.marker.getPosition === 'function') {
         this.map.setCenter(mark.marker.getPosition())
       }
@@ -74,6 +75,31 @@ export default {
         marker.addListener('click', () => this.$emit('select', event.id))
         return { id: event.id, marker }
       })
+      this.applySelection()
+    },
+    // 以 Symbol 畫圓形圖釘，選取者放大；不依賴任何外部圖示檔。
+    markerIcon(selected) {
+      const maps = this.mapsLib
+      if (!maps || !maps.SymbolPath) return null
+      return {
+        path: maps.SymbolPath.CIRCLE,
+        scale: selected ? 10 : 7,
+        fillColor: '#a44900',
+        fillOpacity: 1,
+        strokeColor: '#ffffff',
+        strokeWeight: 2,
+      }
+    },
+    applySelection() {
+      if (!this.ready) return
+      this.marks.forEach(({ id, marker }) => {
+        const selected = id === this.selectedId
+        if (typeof marker.setZIndex === 'function') marker.setZIndex(selected ? 1 : 0)
+        if (typeof marker.setIcon === 'function') {
+          const icon = this.markerIcon(selected)
+          if (icon) marker.setIcon(icon)
+        }
+      })
     },
   },
 }
@@ -87,7 +113,7 @@ export default {
 }
 .event-map__canvas {
   width: 100%;
-  min-height: 220px;
+  min-height: 160px;
   background: var(--muted, #eee);
   border: 2px solid var(--input);
   border-radius: var(--radius-card);
