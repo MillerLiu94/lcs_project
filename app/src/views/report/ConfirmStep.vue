@@ -128,10 +128,7 @@ export default {
   font-size: 1.125rem;
   cursor: pointer;
 }
-.confirm__edit {
-  color: var(--primary);
-  font-weight: 700;
-}
+.confirm__edit { color: var(--primary); font-weight: 700; }
 .confirm__title {
   margin: 0;
   font-size: 1.5rem;
@@ -178,10 +175,7 @@ export default {
   font-weight: 700;
   cursor: pointer;
 }
-.confirm__submit:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
+.confirm__submit:disabled { cursor: not-allowed; opacity: 0.55; }
 .confirm__retry {
   min-height: 48px;
   padding: 0.5rem 1.25rem;
