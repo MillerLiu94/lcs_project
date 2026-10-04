@@ -46,6 +46,36 @@
   --color-red-60: #c0211b;      /* 6.04:1 on white */
 }
 
+/* --------------------------- Type & spacing scale ------------------------- */
+/* Elderly-friendly scale (Display 34 / H2 24 / H3 20 / Body 18 / Meta 16) and
+   the 4-8-16-24-32-48 rhythm. Components consume these tokens instead of ad-hoc
+   px so the whole entry baseline stays consistent. Fonts load in index.html. */
+:root {
+  --font-size-display: 2.125rem; /* 34px */
+  --font-size-h2: 1.5rem;        /* 24px */
+  --font-size-h3: 1.25rem;       /* 20px */
+  --font-size-body: 1.125rem;    /* 18px */
+  --font-size-meta: 1rem;        /* 16px */
+
+  --line-height-display: 1.2;
+  --line-height-h2: 1.3;
+  --line-height-h3: 1.35;
+  --line-height-body: 1.75;
+  --line-height-meta: 1.6;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+
+  /* CJK-first stack for Traditional Chinese, with a high-legibility Latin face
+     for digits and words. */
+  --font-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-latin: "Atkinson Hyperlegible", var(--font-sans);
+}
+
 /* --------------------------- Application tier ----------------------------- */
 /* Names follow shadcn/ui conventions so the tokens drop straight into
    Tailwind + shadcn/ui components. `--primary` is the brand/CTA. */

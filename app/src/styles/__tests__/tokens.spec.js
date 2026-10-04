@@ -11,3 +11,11 @@ test('包含 Firefox 暖色 primary 與 radius tokens', () => {
   expect(css).toContain('#a44900')
   expect(css).toContain('--radius-card')
 })
+
+test('包含字級、間距與字型 token', () => {
+  expect(css).toContain('--font-size-display')
+  expect(css).toContain('--font-size-meta')
+  expect(css).toContain('--space-6')
+  expect(css).toContain('--font-sans')
+  expect(css).toContain('--font-latin')
+})
