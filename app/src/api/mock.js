@@ -1,4 +1,5 @@
 import MockAdapter from 'axios-mock-adapter'
+import { classifyText } from '../services/intentRules'
 
 // 單一 mock adapter 實例（idempotent），僅供開發／測試使用。
 let mock = null
@@ -14,7 +15,19 @@ function registerHealth(adapter) {
   adapter.onGet('/api/health').reply(200, { ok: true })
 }
 
-const REGISTRATIONS = [registerHealth]
+function registerIntent(adapter) {
+  adapter.onPost('/api/intent').reply((config) => {
+    let payload = {}
+    try {
+      payload = typeof config.data === 'string' ? JSON.parse(config.data) : config.data || {}
+    } catch (error) {
+      payload = {}
+    }
+    return [200, classifyText(payload.text)]
+  })
+}
+
+const REGISTRATIONS = [registerHealth, registerIntent]
 
 function registerAll(adapter) {
   REGISTRATIONS.forEach((register) => register(adapter))
