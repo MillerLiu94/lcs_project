@@ -22,6 +22,8 @@ function emptyDraft() {
     location: null,
     time: '',
     photo: null,
+    audio: null,
+    audioName: '',
   }
 }
 
@@ -44,6 +46,22 @@ export default {
     // 可能是帶真實座標的物件，或 §14.4 的 { mode:'unconfirmed', text }。
     setLocation(state, location) {
       state.draft.location = location && typeof location === 'object' ? { ...location } : null
+    },
+    // 附件（選填）：照片為 data URL；音檔另存檔名供摘要顯示。
+    setPhoto(state, photo) {
+      state.draft.photo = typeof photo === 'string' && photo ? photo : null
+    },
+    clearPhoto(state) {
+      state.draft.photo = null
+    },
+    setAudio(state, payload) {
+      const data = payload && typeof payload === 'object' ? payload : {}
+      state.draft.audio = typeof data.dataUrl === 'string' && data.dataUrl ? data.dataUrl : null
+      state.draft.audioName = typeof data.name === 'string' ? data.name : ''
+    },
+    clearAudio(state) {
+      state.draft.audio = null
+      state.draft.audioName = ''
     },
     setStatus(state, status) {
       state.status = status

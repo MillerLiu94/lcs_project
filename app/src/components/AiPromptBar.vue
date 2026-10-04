@@ -16,6 +16,13 @@
       ></textarea>
 
       <div class="prompt-bar__controls">
+        <AttachmentControls
+          v-if="attachable"
+          :is-mobile="isMobile"
+          @photo="onPhoto"
+          @audio="onAudio"
+          @error="attachError = $event"
+        />
         <VoiceButton
           :supported="voiceSupported"
           @result="onVoiceResult"
@@ -33,6 +40,14 @@
       </div>
     </div>
 
+    <AttachmentChips
+      v-if="attachable"
+      :photo="photo"
+      :audio-name="audioName"
+      @remove-photo="$emit('remove-photo')"
+      @remove-audio="$emit('remove-audio')"
+    />
+
     <span v-if="message" :id="messageId" class="prompt-bar__message" role="status">
       {{ message }}
     </span>
@@ -41,13 +56,16 @@
 
 <script>
 import VoiceButton from './VoiceButton.vue'
+import AttachmentControls from './AttachmentControls.vue'
+import AttachmentChips from './AttachmentChips.vue'
 import speechService from '../services/speechService'
+import { useBreakpoint } from '../composables/useBreakpoint'
 
 let uid = 0
 
 export default {
   name: 'AiPromptBar',
-  components: { VoiceButton },
+  components: { VoiceButton, AttachmentControls, AttachmentChips },
   props: {
     value: { type: String, default: '' },
     label: { type: String, default: '請描述你看到或遇到的問題' },
@@ -58,6 +76,14 @@ export default {
     rows: { type: Number, default: 1 },
     busy: { type: Boolean, default: false },
     submitLabel: { type: String, default: '送出' },
+    attachable: { type: Boolean, default: false },
+    photo: { type: String, default: '' },
+    audio: { type: String, default: '' },
+    audioName: { type: String, default: '' },
+  },
+  setup() {
+    const { isMobile } = useBreakpoint()
+    return { isMobile }
   },
   data() {
     uid += 1
@@ -65,6 +91,7 @@ export default {
       inputId: `prompt-bar-${uid}`,
       messageId: `prompt-bar-msg-${uid}`,
       voiceError: '',
+      attachError: '',
     }
   },
   computed: {
@@ -76,6 +103,7 @@ export default {
     },
     // 語音提示／錯誤共用一個區塊，並以 aria-describedby 與輸入框關聯。
     message() {
+      if (this.attachError) return this.attachError
       if (this.voiceError) return this.voiceError
       return this.voiceSupported ? '' : '此裝置不支援語音，請直接用打字'
     },
@@ -107,6 +135,14 @@ export default {
     onVoiceError(error) {
       this.voiceError = (error && error.message) || '語音輸入失敗，請改用打字'
     },
+    onPhoto(dataUrl) {
+      this.attachError = ''
+      this.$emit('attach-photo', dataUrl)
+    },
+    onAudio(payload) {
+      this.attachError = ''
+      this.$emit('attach-audio', payload)
+    },
     resize() {
       const el = this.$refs.input
       if (!el || !el.scrollHeight) return
@@ -118,16 +154,8 @@ export default {
 </script>
 
 <style scoped>
-.prompt-bar {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-.prompt-bar__label {
-  font-size: 1.125rem;
-  font-weight: 700;
-  color: var(--foreground);
-}
+.prompt-bar { display: flex; flex-direction: column; gap: 0.5rem; }
+.prompt-bar__label { font-size: 1.125rem; font-weight: 700; color: var(--foreground); }
 .prompt-bar__field {
   display: flex;
   align-items: flex-end;
@@ -139,11 +167,7 @@ export default {
   border-radius: var(--radius-card);
   box-shadow: var(--shadow-float);
 }
-.prompt-bar__field:focus-within {
-  border-color: var(--ring);
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
+.prompt-bar__field:focus-within { border-color: var(--ring); outline: 2px solid var(--ring); outline-offset: 2px; }
 .prompt-bar__input {
   flex: 1 1 auto;
   min-height: 2.75rem;
@@ -159,14 +183,8 @@ export default {
   font-size: 1.125rem;
   line-height: 1.5;
 }
-.prompt-bar__input::placeholder {
-  color: var(--muted-foreground);
-}
-.prompt-bar__controls {
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
-}
+.prompt-bar__input::placeholder { color: var(--muted-foreground); }
+.prompt-bar__controls { display: flex; align-items: center; gap: 0.25rem; }
 .prompt-bar__send {
   display: grid;
   place-items: center;
@@ -179,19 +197,8 @@ export default {
   border-radius: var(--radius-pill);
   cursor: pointer;
 }
-.prompt-bar__send:hover:not(:disabled) {
-  background: var(--primary-hover);
-}
-.prompt-bar__send:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-.prompt-bar__send:focus-visible {
-  outline: 3px solid var(--ring);
-  outline-offset: 2px;
-}
-.prompt-bar__message {
-  font-size: 1rem;
-  color: var(--muted-foreground);
-}
+.prompt-bar__send:hover:not(:disabled) { background: var(--primary-hover); }
+.prompt-bar__send:disabled { cursor: not-allowed; opacity: 0.55; }
+.prompt-bar__send:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.prompt-bar__message { font-size: 1rem; color: var(--muted-foreground); }
 </style>

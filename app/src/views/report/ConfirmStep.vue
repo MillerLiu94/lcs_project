@@ -23,8 +23,16 @@
         <dd class="confirm__value">{{ timeText }}</dd>
       </div>
       <div class="confirm__row">
-        <dt class="confirm__label">照片</dt>
-        <dd class="confirm__value">{{ photoText }}</dd>
+        <dt class="confirm__label">附件</dt>
+        <dd class="confirm__value">
+          <AttachmentChips
+            :photo="draft.photo"
+            :audio-name="draft.audioName"
+            @remove-photo="removePhoto"
+            @remove-audio="removeAudio"
+          />
+          <span v-if="!draft.photo && !draft.audioName">可選填</span>
+        </dd>
       </div>
     </dl>
 
@@ -49,10 +57,11 @@
 <script>
 import StepIndicator from '../../components/StepIndicator.vue'
 import ErrorAlert from '../../components/ErrorAlert.vue'
+import AttachmentChips from '../../components/AttachmentChips.vue'
 
 export default {
   name: 'ConfirmStep',
-  components: { StepIndicator, ErrorAlert },
+  components: { StepIndicator, ErrorAlert, AttachmentChips },
   computed: {
     draft() {
       return this.$store.state.report.draft
@@ -77,13 +86,16 @@ export default {
     timeText() {
       return this.draft.time || '剛剛'
     },
-    photoText() {
-      return this.draft.photo ? '已附上照片' : '沒有照片（可省略）'
-    },
   },
   methods: {
     goBack() {
       this.$router.push({ name: 'report-location' })
+    },
+    removePhoto() {
+      this.$store.commit('report/clearPhoto')
+    },
+    removeAudio() {
+      this.$store.commit('report/clearAudio')
     },
     edit(name) {
       // 只切換步驟，草稿留在 store，因此不會遺失任何輸入。

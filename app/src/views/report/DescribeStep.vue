@@ -13,8 +13,16 @@
         :rows="6"
         :busy="submitting"
         submit-label="下一步"
+        attachable
+        :photo="draft.photo"
+        :audio="draft.audio"
+        :audio-name="draft.audioName"
         @submit="submit"
         @voice="text = $event"
+        @attach-photo="onPhoto"
+        @attach-audio="onAudio"
+        @remove-photo="clearPhoto"
+        @remove-audio="clearAudio"
       />
 
       <p class="describe__hint"><i class="el-icon-info" aria-hidden="true" /> 不用寫地址，說你看到的就好</p>
@@ -44,10 +52,25 @@ export default {
     canProceed() {
       return this.text.trim().length > 0
     },
+    draft() {
+      return this.$store.state.report.draft
+    },
   },
   methods: {
     goBack() {
       this.$router.push({ name: 'home' })
+    },
+    onPhoto(dataUrl) {
+      this.$store.commit('report/setPhoto', dataUrl)
+    },
+    onAudio(payload) {
+      this.$store.commit('report/setAudio', payload)
+    },
+    clearPhoto() {
+      this.$store.commit('report/clearPhoto')
+    },
+    clearAudio() {
+      this.$store.commit('report/clearAudio')
     },
     async submit() {
       if (!this.canProceed || this.submitting) return

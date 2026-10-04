@@ -6,3 +6,8 @@ test('useBreakpoint 回傳 isDesktop 布林 ref', () => {
   const { isDesktop } = useBreakpoint()
   expect(typeof isDesktop.value).toBe('boolean')
 })
+
+test('useBreakpoint 回傳 isMobile 布林 ref', () => {
+  const { isMobile } = useBreakpoint()
+  expect(typeof isMobile.value).toBe('boolean')
+})

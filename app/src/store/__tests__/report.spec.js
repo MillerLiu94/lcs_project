@@ -36,3 +36,30 @@ describe('report.describe', () => {
     expect(r.missing).toEqual(['description', 'location'])
   })
 })
+
+describe('report 附件（選填）', () => {
+  test('setPhoto / setAudio 寫入草稿，clear 會清空', () => {
+    const store = makeStore()
+    store.commit('report/setPhoto', 'data:image/png;base64,AAA')
+    store.commit('report/setAudio', { name: 'a.mp3', dataUrl: 'data:audio/mp3;base64,BBB' })
+    expect(store.state.report.draft.photo).toBe('data:image/png;base64,AAA')
+    expect(store.state.report.draft.audio).toBe('data:audio/mp3;base64,BBB')
+    expect(store.state.report.draft.audioName).toBe('a.mp3')
+
+    store.commit('report/clearPhoto')
+    store.commit('report/clearAudio')
+    expect(store.state.report.draft.photo).toBeNull()
+    expect(store.state.report.draft.audio).toBeNull()
+    expect(store.state.report.draft.audioName).toBe('')
+  })
+
+  test('reset 會清空附件', () => {
+    const store = makeStore()
+    store.commit('report/setPhoto', 'data:x')
+    store.commit('report/setAudio', { name: 'b.wav', dataUrl: 'data:y' })
+    store.commit('report/resetState')
+    expect(store.state.report.draft.photo).toBeNull()
+    expect(store.state.report.draft.audio).toBeNull()
+    expect(store.state.report.draft.audioName).toBe('')
+  })
+})

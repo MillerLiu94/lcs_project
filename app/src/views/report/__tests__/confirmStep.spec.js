@@ -30,7 +30,20 @@ describe('ConfirmStep（P3 摘要確認）', () => {
     expect(text).toContain('請確認，這樣對嗎？')
     expect(text).toContain('中華路有一個坑洞')
     expect(text).toContain('時間')
-    expect(text).toContain('照片')
+    expect(text).toContain('附件')
+  })
+
+  test('有附件時顯示縮圖與檔名，移除會清空草稿', async () => {
+    const store = makeStore()
+    store.commit('report/setPhoto', 'data:img')
+    store.commit('report/setAudio', { name: 'a.mp3', dataUrl: 'data:aud' })
+    const w = mountStep(store)
+    expect(w.findComponent({ name: 'AttachmentChips' }).exists()).toBe(true)
+
+    await w.find('[aria-label="移除照片"]').trigger('click')
+    await w.find('[aria-label="移除音檔"]').trigger('click')
+    expect(store.state.report.draft.photo).toBeNull()
+    expect(store.state.report.draft.audioName).toBe('')
   })
 
   test('送出中按鈕停用並擋下重複點擊', async () => {

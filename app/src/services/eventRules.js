@@ -69,6 +69,8 @@ export function createEvent(draft = {}, { id, now = new Date() } = {}) {
     status: 'reported',
     description,
     photo: source.photo || null,
+    audio: source.audio || null,
+    audioName: source.audioName || '',
     reportedAt: now.toISOString(),
   }
 }

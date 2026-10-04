@@ -45,6 +45,33 @@ describe('AiPromptBar', () => {
     await w2.find('textarea').trigger('keydown', { key: 'Enter', shiftKey: true })
     expect(w2.emitted('submit')).toBeFalsy()
   })
+
+  test('attachable 關閉時不顯示附件控制；開啟時顯示', () => {
+    const off = mount(AiPromptBar, { propsData: { value: '' } })
+    expect(off.findComponent({ name: 'AttachmentControls' }).exists()).toBe(false)
+    const on = mount(AiPromptBar, { propsData: { value: '', attachable: true } })
+    expect(on.findComponent({ name: 'AttachmentControls' }).exists()).toBe(true)
+  })
+
+  test('附件選擇事件由子元件往上轉發', () => {
+    const w = mount(AiPromptBar, { propsData: { value: '', attachable: true } })
+    const controls = w.findComponent({ name: 'AttachmentControls' })
+    controls.vm.$emit('photo', 'data:img')
+    controls.vm.$emit('audio', { name: 'a.mp3', dataUrl: 'data:aud' })
+    expect(w.emitted('attach-photo')[0]).toEqual(['data:img'])
+    expect(w.emitted('attach-audio')[0]).toEqual([{ name: 'a.mp3', dataUrl: 'data:aud' }])
+  })
+
+  test('移除事件由 AttachmentChips 往上轉發', () => {
+    const w = mount(AiPromptBar, {
+      propsData: { value: '', attachable: true, photo: 'data:img', audioName: 'a.mp3' },
+    })
+    const chips = w.findComponent({ name: 'AttachmentChips' })
+    chips.vm.$emit('remove-photo')
+    chips.vm.$emit('remove-audio')
+    expect(w.emitted('remove-photo')).toBeTruthy()
+    expect(w.emitted('remove-audio')).toBeTruthy()
+  })
 })
 
 describe('VoiceButton', () => {

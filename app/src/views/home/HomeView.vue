@@ -32,8 +32,16 @@
         :rows="3"
         :busy="routing"
         submit-label="開始"
+        attachable
+        :photo="draft.photo"
+        :audio="draft.audio"
+        :audio-name="draft.audioName"
         @submit="submit"
         @voice="text = $event"
+        @attach-photo="onPhoto"
+        @attach-audio="onAudio"
+        @remove-photo="clearPhoto"
+        @remove-audio="clearAudio"
       />
     </form>
   </section>
@@ -53,6 +61,9 @@ export default {
     canSubmit() {
       return this.text.trim().length > 0
     },
+    draft() {
+      return this.$store.state.report.draft
+    },
   },
   methods: {
     async submit() {
@@ -64,6 +75,18 @@ export default {
       } finally {
         this.routing = false
       }
+    },
+    onPhoto(dataUrl) {
+      this.$store.commit('report/setPhoto', dataUrl)
+    },
+    onAudio(payload) {
+      this.$store.commit('report/setAudio', payload)
+    },
+    clearPhoto() {
+      this.$store.commit('report/clearPhoto')
+    },
+    clearAudio() {
+      this.$store.commit('report/clearAudio')
     },
   },
 }
