@@ -1,0 +1,66 @@
+[
+  {
+    "id": "w-001",
+    "title": "重陽敬老活動",
+    "source": "中正區公所",
+    "publishedAt": "2026-09-25",
+    "eventDate": "2026-10-20",
+    "url": "https://example.org/welfare/001"
+  },
+  {
+    "id": "w-002",
+    "title": "重陽敬老活動",
+    "source": "萬華區公所",
+    "publishedAt": "2026-09-28",
+    "eventDate": "2026-10-20",
+    "url": "https://example.org/welfare/002"
+  },
+  {
+    "id": "w-003",
+    "title": "社區健康檢查",
+    "source": "台北市立聯合醫院",
+    "publishedAt": "2026-02-01",
+    "eventDate": "2024-03-10",
+    "url": "https://example.org/welfare/003"
+  },
+  {
+    "id": "w-004",
+    "title": "老人共餐活動",
+    "source": "中正社區發展協會",
+    "publishedAt": "2026-09-30",
+    "eventDate": "2026-11-05",
+    "url": "https://example.org/welfare/004"
+  },
+  {
+    "id": "w-005",
+    "title": "長青電腦課程",
+    "source": "台北市社會局",
+    "publishedAt": "2026-09-18",
+    "eventDate": "2026-10-25",
+    "url": "https://example.org/welfare/005"
+  },
+  {
+    "id": "w-006",
+    "title": "流感疫苗接種",
+    "source": "中正區健康服務中心",
+    "publishedAt": "2026-09-15",
+    "eventDate": "2026-10-15",
+    "url": "https://example.org/welfare/006"
+  },
+  {
+    "id": "w-007",
+    "title": "親子園遊會",
+    "source": "萬華區公所",
+    "publishedAt": "2026-10-01",
+    "eventDate": "2026-12-06",
+    "url": "https://example.org/welfare/007"
+  },
+  {
+    "id": "w-008",
+    "title": "中低收入戶補助說明會",
+    "source": "台北市社會局",
+    "publishedAt": "2025-06-01",
+    "eventDate": "2025-08-01",
+    "url": "https://example.org/welfare/008"
+  }
+]

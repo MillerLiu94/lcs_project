@@ -1,0 +1,74 @@
+[
+  {
+    "id": "e-001",
+    "type": "坑洞",
+    "title": "中華路一段路面坑洞",
+    "placeText": "中華路一段 100 號附近",
+    "coordinates": { "lat": 25.0455, "lng": 121.509 },
+    "timeText": "今天上午",
+    "status": "reported",
+    "description": "機車道有一個拳頭大的坑洞，經過時很危險。",
+    "photo": null,
+    "reportedAt": "2026-10-04T09:20:00+08:00"
+  },
+  {
+    "id": "e-002",
+    "type": "路燈",
+    "title": "巷口路燈不亮",
+    "placeText": "汀州路二段 143 號旁",
+    "coordinates": { "lat": 25.0237, "lng": 121.521 },
+    "timeText": "昨天晚上",
+    "status": "in-progress",
+    "description": "整排路燈從昨晚開始不亮，夜間視線很差。",
+    "photo": null,
+    "reportedAt": "2026-10-03T20:10:00+08:00"
+  },
+  {
+    "id": "e-003",
+    "type": "積水",
+    "title": "騎樓積水不退",
+    "placeText": "青年公園旁騎樓",
+    "coordinates": { "lat": 25.022, "lng": 121.501 },
+    "timeText": "今天清晨",
+    "status": "reported",
+    "description": "雨後騎樓積水一直沒退，行人得繞到馬路上。",
+    "photo": null,
+    "reportedAt": "2026-10-04T06:45:00+08:00"
+  },
+  {
+    "id": "e-004",
+    "type": "垃圾",
+    "title": "公園垃圾桶滿溢",
+    "placeText": "青年公園入口",
+    "coordinates": null,
+    "timeText": "前天下午",
+    "status": "reported",
+    "description": "垃圾桶滿出來，垃圾散落一地，味道很重。",
+    "photo": null,
+    "reportedAt": "2026-10-02T15:30:00+08:00"
+  },
+  {
+    "id": "e-005",
+    "type": "違規停車",
+    "title": "並排停車擋住出入口",
+    "placeText": "中華路全家便利商店前",
+    "coordinates": { "lat": 25.0455, "lng": 121.509 },
+    "timeText": "昨天中午",
+    "status": "resolved",
+    "description": "汽車並排停放，擋住社區出入口，輪椅無法通行。",
+    "photo": null,
+    "reportedAt": "2026-10-03T12:05:00+08:00"
+  },
+  {
+    "id": "e-006",
+    "type": "坑洞",
+    "title": "人行道地磚破損",
+    "placeText": "台北車站附近人行道",
+    "coordinates": { "lat": 25.0478, "lng": 121.517 },
+    "timeText": "上週",
+    "status": "in-progress",
+    "description": "好幾塊地磚翹起破損，推嬰兒車很難走。",
+    "photo": null,
+    "reportedAt": "2026-09-28T11:00:00+08:00"
+  }
+]
