@@ -80,7 +80,7 @@ export default {
   border-radius: var(--radius-pill);
   background: var(--primary);
   color: var(--primary-foreground);
-  font-size: 1rem;
+  font-size: var(--font-size-meta);
 }
 .top-nav__brand-name {
   font-size: var(--font-size-body);

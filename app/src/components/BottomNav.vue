@@ -7,7 +7,12 @@
         class="bottom-nav__item"
         data-nav-item
       >
-        <router-link class="bottom-nav__link" :to="item.to">
+        <!-- 首頁 `/` 需 exact，否則任何路徑都會判定為 active。 -->
+        <router-link
+          class="bottom-nav__link"
+          :to="item.to"
+          :exact="item.to === '/'"
+        >
           <component :is="iconFor(item.icon)" :size="20" aria-hidden="true" />
           <span>{{ item.label }}</span>
         </router-link>
@@ -77,7 +82,7 @@ export default {
   color: inherit;
   text-align: center;
   text-decoration: none;
-  font-size: 0.8125rem;
+  font-size: var(--font-size-meta);
   line-height: 1.2;
 }
 .bottom-nav__link:focus-visible {

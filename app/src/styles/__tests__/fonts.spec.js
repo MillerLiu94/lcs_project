@@ -14,3 +14,11 @@ test('載入 Noto Sans TC 與 Atkinson Hyperlegible', () => {
 test('body 套用 --font-sans', () => {
   expect(tokens).toContain('font-family: var(--font-sans)')
 })
+
+test('拉丁字型排在 CJK 之前（Atkinson 才會實際生效）', () => {
+  const iAtk = tokens.indexOf('Atkinson Hyperlegible')
+  const iNoto = tokens.indexOf('Noto Sans TC')
+  expect(iAtk).toBeGreaterThan(-1)
+  expect(iNoto).toBeGreaterThan(-1)
+  expect(iAtk).toBeLessThan(iNoto)
+})

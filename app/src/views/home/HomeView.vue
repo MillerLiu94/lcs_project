@@ -122,12 +122,12 @@ export default {
   border-radius: var(--radius-pill);
   background: var(--primary);
   color: var(--primary-foreground);
-  font-size: 0.9rem;
+  font-size: var(--font-size-meta);
 }
 .home__title {
   margin: 0;
-  font-size: var(--font-size-h2);
-  line-height: var(--line-height-h2);
+  font-size: var(--font-size-display);
+  line-height: var(--line-height-display);
 }
 .home__cards {
   display: grid;

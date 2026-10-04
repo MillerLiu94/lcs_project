@@ -77,11 +77,12 @@ export default {
   outline: 3px solid var(--ring);
   outline-offset: 2px;
 }
-/* Hero：主行動卡，較大、暖底漸層、帶 CTA。 */
+/* Hero：主行動卡，較大、暖底漸層、標題升一階、帶 CTA。 */
 .big-task-card--hero {
   align-items: flex-start;
   min-height: 120px;
   padding: 1.5rem;
+  background: var(--card);
   background: linear-gradient(180deg, var(--card), color-mix(in srgb, var(--accent) 45%, var(--card)));
 }
 .big-task-card--hero .big-task-card__icon {
@@ -89,7 +90,7 @@ export default {
   height: 64px;
 }
 .big-task-card--hero .big-task-card__title {
-  font-size: var(--font-size-h3);
+  font-size: var(--font-size-h2);
 }
 .big-task-card__icon {
   display: inline-flex;
@@ -108,12 +109,12 @@ export default {
   gap: 0.25rem;
 }
 .big-task-card__title {
-  font-size: 1.25rem;
+  font-size: var(--font-size-h3);
   font-weight: 700;
   line-height: 1.3;
 }
 .big-task-card__desc {
-  font-size: 1rem;
+  font-size: var(--font-size-body);
   color: var(--muted-foreground);
   line-height: 1.4;
 }
@@ -129,6 +130,7 @@ export default {
   color: var(--primary-foreground);
   border-radius: var(--radius-pill);
   font-weight: 700;
+  font-size: var(--font-size-meta);
 }
 @media (prefers-reduced-motion: reduce) {
   .big-task-card {

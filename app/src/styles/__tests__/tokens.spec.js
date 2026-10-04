@@ -19,3 +19,11 @@ test('包含字級、間距與字型 token', () => {
   expect(css).toContain('--font-sans')
   expect(css).toContain('--font-latin')
 })
+
+test('字級 token 為規格指定的 px 值', () => {
+  expect(css).toMatch(/--font-size-display:\s*34px/)
+  expect(css).toMatch(/--font-size-h2:\s*24px/)
+  expect(css).toMatch(/--font-size-h3:\s*20px/)
+  expect(css).toMatch(/--font-size-body:\s*18px/)
+  expect(css).toMatch(/--font-size-meta:\s*16px/)
+})

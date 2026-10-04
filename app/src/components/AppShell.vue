@@ -34,13 +34,13 @@ export default {
 /* Mobile-first: full-width single column with room for the floating bottom nav. */
 .app-shell__main {
   margin: 0 auto;
-  padding: 1.5rem 1rem 7rem;
+  padding: var(--space-4) var(--space-3) 7rem;
 }
 /* Desktop enhancement: content max-width narrows and centres under the top nav. */
 @media (min-width: 1024px) {
   .app-shell__main {
     max-width: 72rem;
-    padding: 2rem 2rem 3rem;
+    padding: var(--space-5) var(--space-5) var(--space-6);
   }
 }
 </style>

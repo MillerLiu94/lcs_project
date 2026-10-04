@@ -37,7 +37,7 @@
             :aria-label="busy ? '處理中' : submitLabel"
             @click="onSend"
           >
-            <i class="el-icon-position" style="font-size: 1.25rem" aria-hidden="true" />
+            <i class="el-icon-position" style="font-size: var(--font-size-h3)" aria-hidden="true" />
           </button>
         </div>
       </div>
@@ -158,7 +158,7 @@ export default {
 
 <style scoped>
 .prompt-bar { display: flex; flex-direction: column; gap: 0.5rem; }
-.prompt-bar__label { font-size: 1.125rem; font-weight: 700; color: var(--foreground); }
+.prompt-bar__label { font-size: var(--font-size-body); font-weight: 700; color: var(--foreground); }
 .prompt-bar__field {
   display: flex;
   flex-direction: column;
@@ -183,7 +183,7 @@ export default {
   resize: none;
   overflow-y: auto;
   font-family: inherit;
-  font-size: 1.125rem;
+  font-size: var(--font-size-body);
   line-height: 1.5;
 }
 .prompt-bar__input::placeholder { color: var(--muted-foreground); }
@@ -204,5 +204,5 @@ export default {
 .prompt-bar__send:hover:not(:disabled) { background: var(--primary-hover); }
 .prompt-bar__send:disabled { cursor: not-allowed; opacity: 0.55; }
 .prompt-bar__send:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
-.prompt-bar__message { font-size: 1rem; color: var(--muted-foreground); }
+.prompt-bar__message { font-size: var(--font-size-meta); color: var(--muted-foreground); }
 </style>

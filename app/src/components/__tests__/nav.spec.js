@@ -1,4 +1,5 @@
-import { mount, shallowMount } from '@vue/test-utils'
+import { createLocalVue, mount, shallowMount } from '@vue/test-utils'
+import VueRouter from 'vue-router'
 import BottomNav from '../BottomNav.vue'
 import TopNav from '../TopNav.vue'
 import { NAV_ITEMS, MOBILE_NAV_ITEMS } from '../../router'
@@ -31,4 +32,22 @@ test('桌面導覽每項都有圖示', () => {
   expect(items).toHaveLength(3)
   expect(w.findAll('[data-nav-item] i')).toHaveLength(3)
   expect(w.text()).toContain('福利活動')
+})
+
+// 真 router 整合測試：首頁路由 `/` 若無 exact，會在所有路由都判定為 active。
+test('在事件頁時，首頁不應呈現選中態', async () => {
+  const localVue = createLocalVue()
+  localVue.use(VueRouter)
+  const router = new VueRouter({
+    routes: [
+      { path: '/', component: { template: '<div />' } },
+      { path: '/events', component: { template: '<div />' } },
+      { path: '/welfare', component: { template: '<div />' } },
+      { path: '/report', component: { template: '<div />' } },
+    ],
+  })
+  await router.push('/events')
+  const w = mount(BottomNav, { localVue, router })
+  const home = w.findAll('[data-nav-item]').at(0)
+  expect(home.find('a').classes()).not.toContain('router-link-active')
 })
