@@ -6,30 +6,29 @@
     </header>
 
     <form class="describe__form" @submit.prevent="submit">
-      <NlInputBox
+      <AiPromptBar
         v-model="text"
         label="請說說看，這裡發生什麼事？"
         placeholder="例如：中華路全家旁邊有一個坑洞"
         :rows="6"
+        :busy="submitting"
+        submit-label="下一步"
+        @submit="submit"
         @voice="text = $event"
       />
 
       <p class="describe__hint">💡 不用寫地址，說你看到的就好</p>
-
-      <button class="describe__submit" type="submit" :disabled="!canProceed || submitting">
-        {{ submitting ? '正在理解…' : '下一步' }}
-      </button>
     </form>
   </section>
 </template>
 
 <script>
-import NlInputBox from '../../components/NlInputBox.vue'
+import AiPromptBar from '../../components/AiPromptBar.vue'
 import StepIndicator from '../../components/StepIndicator.vue'
 
 export default {
   name: 'DescribeStep',
-  components: { NlInputBox, StepIndicator },
+  components: { AiPromptBar, StepIndicator },
   data() {
     return { submitting: false }
   },
@@ -99,28 +98,5 @@ export default {
   margin: 0;
   font-size: 1rem;
   color: var(--muted-foreground);
-}
-.describe__submit {
-  min-height: 56px;
-  padding: 0.75rem 1.5rem;
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border: none;
-  border-radius: var(--radius-pill);
-  font-family: inherit;
-  font-size: 1.125rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-.describe__submit:hover:not(:disabled) {
-  background: var(--primary-hover);
-}
-.describe__submit:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-.describe__submit:focus-visible {
-  outline: 3px solid var(--ring);
-  outline-offset: 2px;
 }
 </style>

@@ -14,14 +14,15 @@
     </div>
 
     <form v-if="situation === 'text'" class="location__stack" @submit.prevent="findByText">
-      <NlInputBox
+      <AiPromptBar
         v-model="locText"
         label="大概在哪裡？"
         placeholder="例如：中華路全家旁邊"
         :rows="3"
+        submit-label="找位置"
+        @submit="findByText"
         @voice="locText = $event"
       />
-      <button type="submit" :disabled="!locText.trim()">找位置</button>
     </form>
 
     <MapPicker v-if="situation === 'map'" :lat="anchor.lat" :lng="anchor.lng" @pick="onPick" />
@@ -44,14 +45,14 @@
 </template>
 
 <script>
-import NlInputBox from '../../components/NlInputBox.vue'
+import AiPromptBar from '../../components/AiPromptBar.vue'
 import StepIndicator from '../../components/StepIndicator.vue'
 import ErrorAlert from '../../components/ErrorAlert.vue'
 import MapPicker from '../../components/MapPicker.vue'
 
 export default {
   name: 'LocationStep',
-  components: { NlInputBox, StepIndicator, ErrorAlert, MapPicker },
+  components: { AiPromptBar, StepIndicator, ErrorAlert, MapPicker },
   data() {
     return { situation: 'idle', locText: '', error: '' }
   },

@@ -25,27 +25,27 @@
     </div>
 
     <form class="home__ask" @submit.prevent="submit">
-      <NlInputBox
+      <AiPromptBar
         v-model="text"
         label="也可以直接說你想做什麼"
         placeholder="例如：附近有沒有積水、這個月有什麼老人活動"
         :rows="3"
+        :busy="routing"
+        submit-label="開始"
+        @submit="submit"
         @voice="text = $event"
       />
-      <button class="home__submit" type="submit" :disabled="!canSubmit || routing">
-        {{ routing ? '正在理解…' : '開始' }}
-      </button>
     </form>
   </section>
 </template>
 
 <script>
 import BigTaskCard from '../../components/BigTaskCard.vue'
-import NlInputBox from '../../components/NlInputBox.vue'
+import AiPromptBar from '../../components/AiPromptBar.vue'
 
 export default {
   name: 'HomeView',
-  components: { BigTaskCard, NlInputBox },
+  components: { BigTaskCard, AiPromptBar },
   data() {
     return { text: '', routing: false }
   },
@@ -101,28 +101,5 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-}
-.home__submit {
-  min-height: 56px;
-  padding: 0.75rem 1.5rem;
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border: none;
-  border-radius: var(--radius-pill);
-  font-family: inherit;
-  font-size: 1.125rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-.home__submit:hover:not(:disabled) {
-  background: var(--primary-hover);
-}
-.home__submit:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-.home__submit:focus-visible {
-  outline: 3px solid var(--ring);
-  outline-offset: 2px;
 }
 </style>

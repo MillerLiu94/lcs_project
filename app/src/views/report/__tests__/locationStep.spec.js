@@ -39,7 +39,7 @@ describe('LocationStep（P2 確認位置）', () => {
       await w.findAll('.location__stack button').at(0).trigger('click')
       await new Promise((resolve) => setTimeout(resolve, 0))
       expect(w.vm.situation).toBe('text')
-      expect(w.findComponent({ name: 'NlInputBox' }).exists()).toBe(true)
+      expect(w.findComponent({ name: 'AiPromptBar' }).exists()).toBe(true)
       expect(w.find('.location__confirm').attributes('disabled')).toBe('disabled')
     } finally {
       delete window.navigator.geolocation
@@ -147,6 +147,6 @@ describe('LocationStep（P2 確認位置）', () => {
     expect(alt).toBeTruthy()
     await alt.trigger('click')
     expect(w.vm.situation).toBe('text')
-    expect(w.findComponent({ name: 'NlInputBox' }).exists()).toBe(true)
+    expect(w.findComponent({ name: 'AiPromptBar' }).exists()).toBe(true)
   })
 })

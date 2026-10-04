@@ -1,10 +1,13 @@
 <template>
   <form class="search-input" @submit.prevent="submit">
-    <NlInputBox
+    <AiPromptBar
       v-model="text"
       label="想找什麼福利或活動？"
       placeholder="例如：這個月有什麼老人活動？"
       :rows="3"
+      :busy="busy"
+      submit-label="開始找"
+      @submit="submit"
       @voice="text = $event"
     />
 
@@ -21,19 +24,15 @@
         {{ example }}
       </button>
     </div>
-
-    <button class="search-input__submit" type="submit" :disabled="!canSubmit || busy">
-      {{ busy ? '正在幫你找…' : '開始找' }}
-    </button>
   </form>
 </template>
 
 <script>
-import NlInputBox from '../../components/NlInputBox.vue'
+import AiPromptBar from '../../components/AiPromptBar.vue'
 
 export default {
   name: 'SearchInput',
-  components: { NlInputBox },
+  components: { AiPromptBar },
   props: {
     value: { type: String, default: '' },
     busy: { type: Boolean, default: false },
@@ -97,24 +96,7 @@ export default {
   background: var(--accent);
   color: var(--accent-foreground);
 }
-.search-input__submit {
-  min-height: 56px;
-  padding: 0.75rem 1.5rem;
-  background: var(--primary);
-  color: var(--primary-foreground);
-  border: none;
-  border-radius: var(--radius-pill);
-  font-family: inherit;
-  font-size: 1.125rem;
-  font-weight: 700;
-  cursor: pointer;
-}
-.search-input__submit:disabled {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-.search-input__chip:focus-visible,
-.search-input__submit:focus-visible {
+.search-input__chip:focus-visible {
   outline: 3px solid var(--ring);
   outline-offset: 2px;
 }
