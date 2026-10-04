@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
+import store from '../store'
 import HomeView from '../views/home/HomeView.vue'
 import DescribeStep from '../views/report/DescribeStep.vue'
 import LocationStep from '../views/report/LocationStep.vue'
@@ -34,6 +35,17 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   routes,
+})
+
+// 申報護欄：還沒有描述時，後續步驟（選位置／確認／完成）一律導回第一步。
+router.beforeEach((to, from, next) => {
+  const description = store.state.report.draft.description
+  const isLaterReportStep = to.path.startsWith('/report/')
+  if (isLaterReportStep && !String(description || '').trim()) {
+    next({ name: 'report' })
+    return
+  }
+  next()
 })
 
 export default router
