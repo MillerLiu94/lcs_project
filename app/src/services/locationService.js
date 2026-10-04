@@ -1,4 +1,5 @@
 import http from '../api/http'
+import { isScenario } from '../mocks/demoScenarios'
 import { scorePlaces, nearestPlace } from './placeScoring'
 
 // G3 的可切換縫（swappable seam）：單一開關決定位置來源。
@@ -58,7 +59,11 @@ export function decide({ onSite, permissionGranted, candidates, wantsMap } = {})
 
 /** 文字 → 候選地點（依命中分數由高到低）。 */
 async function geocode(text) {
-  if (USE_MOCK) return scorePlaces(text)
+  if (USE_MOCK) {
+    if (isScenario('error')) throw new Error('mock scenario: places error')
+    if (isScenario('empty')) return []
+    return scorePlaces(text)
+  }
   const { data } = await http.get('/api/places', { params: { q: text } })
   return Array.isArray(data) ? data : (data && data.candidates) || []
 }
@@ -66,6 +71,7 @@ async function geocode(text) {
 /** 座標 → 地址文字；無對應地點時回空字串（不含任何 UI 文案）。 */
 async function reverse(lat, lng) {
   if (USE_MOCK) {
+    if (isScenario('error')) throw new Error('mock scenario: places error')
     const place = nearestPlace(lat, lng)
     return place ? place.address : ''
   }

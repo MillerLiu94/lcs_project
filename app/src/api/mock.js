@@ -4,6 +4,7 @@ import { scorePlaces } from '../services/placeScoring'
 import { selectEvents } from '../services/eventRules'
 import { selectWelfare } from '../services/welfareRules'
 import eventStore from '../services/eventStore'
+import { isScenario, welfareFailedSources } from '../mocks/demoScenarios'
 import places from '../mocks/places.json'
 import welfare from '../mocks/welfare.json'
 
@@ -23,6 +24,7 @@ function registerHealth(adapter) {
 
 function registerIntent(adapter) {
   adapter.onPost('/api/intent').reply((config) => {
+    if (isScenario('ambiguous')) return [200, { intent: 'ambiguous', confidence: 0, extracted: {} }]
     let payload = {}
     try {
       payload = typeof config.data === 'string' ? JSON.parse(config.data) : config.data || {}
@@ -36,6 +38,8 @@ function registerIntent(adapter) {
 function registerPlaces(adapter) {
   // 不帶 q 時回傳地點目錄；帶 q 時以同一套純計分回傳候選。
   adapter.onGet('/api/places').reply((config) => {
+    if (isScenario('error')) return [500, { message: 'mock scenario: places error' }]
+    if (isScenario('empty')) return [200, []]
     const q = config.params && config.params.q
     return [200, q ? scorePlaces(q) : places]
   })
@@ -68,8 +72,16 @@ function registerEvents(adapter) {
 
 function registerWelfare(adapter) {
   // 福利／活動聚合：查詢參數（type/target/time/region）交由純規則整理。
+  // ?mock= 可強制 error（500）／timeout／empty／partial，無參數時維持預設。
   adapter.onGet('/api/welfare').reply((config) => {
-    return [200, selectWelfare(welfare, config.params || {})]
+    if (isScenario('error')) return [500, { message: 'mock scenario: welfare error' }]
+    if (isScenario('timeout')) {
+      return [200, { results: [], partial: false, failedSources: [], timeout: true }]
+    }
+    if (isScenario('empty')) {
+      return [200, { results: [], partial: false, failedSources: [] }]
+    }
+    return [200, selectWelfare(welfare, config.params || {}, { failedSources: welfareFailedSources() })]
   })
 }
 
