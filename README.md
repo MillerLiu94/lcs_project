@@ -23,7 +23,7 @@
 |---|---|
 | 框架 | Vue **2.7** |
 | 建置 | Vite（`@vitejs/plugin-vue2`） |
-| 套件管理 | pnpm |
+| 套件管理 | pnpm（亦可用 npm / yarn；見「快速開始」） |
 | 元件庫 | Element UI 2.15.x（SCSS 客製主題，圖示全用 Element UI icons） |
 | 路由 | Vue Router 3 |
 | 狀態 | Vuex 3 |
@@ -36,26 +36,38 @@
 
 ## 快速開始
 
-需求：**Node 18+**（開發使用 Node 24）與 **pnpm**。
+需求：**Node 18 以上**。指令以最普及的 **npm** 為主；若你慣用 pnpm / yarn，見下方替代。
 
 ```bash
-# 安裝依賴
-pnpm -C app install
-
-# 啟動開發伺服器（預設 http://localhost:5173）
-pnpm -C app dev
+cd app
+npm install
+npm run dev        # 開發伺服器，預設 http://localhost:5173
 ```
+
+<details>
+<summary>使用其他套件管理器</summary>
+
+- **pnpm**：`cd app && pnpm install && pnpm dev`
+  （或在專案根目錄：`pnpm -C app install`、`pnpm -C app dev`）
+- **Corepack**（Node 內建，**不需先安裝 pnpm**）：先執行 `corepack enable pnpm`，之後即可直接用 `pnpm`。
+- **yarn**：`cd app && yarn && yarn dev`
+- **npm（從專案根目錄）**：`npm --prefix app install`、`npm --prefix app run dev`
+
+</details>
 
 ---
 
 ## 指令
 
-| 指令 | 說明 |
-|---|---|
-| `pnpm -C app dev` | 啟動 Vite 開發伺服器 |
-| `pnpm -C app build` | 產出靜態檔至 `app/dist/` |
-| `pnpm -C app preview` | 預覽建置結果 |
-| `pnpm -C app test` | 執行單元測試（Vitest） |
+以下指令均**在 `app/` 目錄內**執行（或於根目錄用 `npm --prefix app <script>`／`pnpm -C app <script>`）。
+
+| 動作 | npm | pnpm |
+|---|---|---|
+| 安裝依賴 | `npm install` | `pnpm install` |
+| 開發伺服器 | `npm run dev` | `pnpm dev` |
+| 建置（輸出 `app/dist/`） | `npm run build` | `pnpm build` |
+| 預覽建置結果 | `npm run preview` | `pnpm preview` |
+| 執行測試 | `npm test` | `pnpm test` |
 
 ---
 
@@ -112,7 +124,8 @@ VITE_GOOGLE_MAPS_KEY=你的金鑰
 ## 測試
 
 ```bash
-pnpm -C app test
+cd app
+npm test
 ```
 
 涵蓋服務層（intent／event／welfare／location）、store、共用元件、三支流程與無障礙。目前為 **37 檔 / 273 測試**。
