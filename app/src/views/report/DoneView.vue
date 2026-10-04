@@ -1,6 +1,6 @@
 <template>
   <section class="done" role="status">
-    <p class="done__mark" aria-hidden="true">✓</p>
+    <p class="done__mark" aria-hidden="true"><i class="el-icon-check" /></p>
     <h1 class="done__message">已收到你的回報，社區工作人員會盡快處理。</h1>
     <button type="button" class="done__home" @click="goHome">回首頁</button>
   </section>
