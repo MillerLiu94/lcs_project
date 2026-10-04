@@ -3,10 +3,16 @@ import BottomNav from '../BottomNav.vue'
 import TopNav from '../TopNav.vue'
 import { NAV_ITEMS, MOBILE_NAV_ITEMS } from '../../router'
 
-test('底部導覽有三個項目且文字正確', () => {
+test('手機底部導覽有四項且含首頁', () => {
   const w = shallowMount(BottomNav, { stubs: ['router-link'] })
-  expect(w.findAll('[data-nav-item]').length).toBe(3)
+  expect(w.findAll('[data-nav-item]')).toHaveLength(4)
+  expect(w.text()).toContain('首頁')
   expect(w.text()).toContain('福利活動')
+})
+
+test('底部導覽每項都有圖示', () => {
+  const w = mount(BottomNav, { stubs: ['router-link'] })
+  expect(w.findAll('[data-nav-item] i')).toHaveLength(4)
 })
 
 test('桌面 NAV_ITEMS 為 3 項且標籤已縮短', () => {
