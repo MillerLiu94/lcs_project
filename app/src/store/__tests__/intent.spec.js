@@ -11,10 +11,12 @@ function makeStore() {
 }
 
 describe('intent.routeFromText', () => {
-  test('ambiguous 導向 clarify', async () => {
+  test('無法判斷 → 進 results（不再進 clarify）', async () => {
     const store = makeStore()
-    const r = await store.dispatch('intent/routeFromText', '最近有什麼')
-    expect(r.name).toBe('clarify')
+    await expect(store.dispatch('intent/routeFromText', '最近有什麼')).resolves.toEqual({
+      name: 'results',
+      query: { q: '最近有什麼' },
+    })
   })
 
   test('query 導向 events 並以 ?q= 帶上原話（辨識結果不遺失）', async () => {
@@ -38,6 +40,15 @@ describe('intent.routeFromText', () => {
       name: 'report',
     })
     expect(store.state.report.draft.description).toBe(text)
+  })
+
+  test('複合（多意圖）→ 進 results 並帶上原話', async () => {
+    const store = makeStore()
+    const text = '附近有沒有積水，這個月有什麼老人活動'
+    await expect(store.dispatch('intent/routeFromText', text)).resolves.toEqual({
+      name: 'results',
+      query: { q: text },
+    })
   })
 })
 
