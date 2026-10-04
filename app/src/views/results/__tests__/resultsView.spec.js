@@ -1,4 +1,5 @@
 import { createLocalVue, mount } from '@vue/test-utils'
+import Vue from 'vue'
 import Vuex from 'vuex'
 import ResultsView from '../ResultsView.vue'
 import query from '../../../store/modules/query'
@@ -53,4 +54,22 @@ test('含回報意圖 → 顯示前往回報入口、不自動開始流程', asy
   const link = w.find('a[href="/assistant/report"]')
   expect(link.exists()).toBe(true)
   expect(link.text()).toContain('要回報嗎')
+})
+
+test('同一路由換 q 會重新解析並查詢', async () => {
+  vi.spyOn(eventService, 'list').mockResolvedValue([])
+  const store = new Vuex.Store({ modules: { query, welfare } })
+  const $route = Vue.observable({ query: { q: '這個月有什麼老人活動' } })
+  const w = mount(ResultsView, {
+    localVue,
+    store,
+    stubs: { RouterLink: RouterLinkStub },
+    mocks: { $route },
+  })
+  await flush()
+  expect(w.vm.intents).toEqual([{ intent: 'welfare', text: '這個月有什麼老人活動' }])
+
+  $route.query = { q: '附近有沒有積水' }
+  await flush()
+  expect(w.vm.intents).toEqual([{ intent: 'query', text: '附近有沒有積水' }])
 })

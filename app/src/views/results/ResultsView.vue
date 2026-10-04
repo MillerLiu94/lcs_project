@@ -79,7 +79,7 @@ import ResultList from '../welfare/ResultList.vue'
 import NoResultState from '../welfare/NoResultState.vue'
 import SearchingState from '../welfare/SearchingState.vue'
 import ErrorAlert from '../../components/ErrorAlert.vue'
-import { parseIntents } from '../../services/intentRules'
+import intentService from '../../services/intentService'
 
 const STATUS_TEXT = { reported: '待處理', 'in-progress': '處理中', resolved: '已完成' }
 
@@ -135,13 +135,21 @@ export default {
       return this.welfarePhase === 'loading' || this.welfarePhase === 'processing'
     },
   },
+  watch: {
+    // 同一路由換 q（深連結、再查）時重新解析與查詢。
+    '$route.query.q'(q) {
+      this.load(q || '')
+    },
+  },
   created() {
-    const q = (this.$route && this.$route.query && this.$route.query.q) || ''
-    this.intents = parseIntents(q)
-    if (this.hasQuery) this.$store.dispatch('query/searchFromText', this.queryClause)
-    if (this.hasWelfare) this.$store.dispatch('welfare/search', this.welfareClause)
+    this.load((this.$route && this.$route.query && this.$route.query.q) || '')
   },
   methods: {
+    async load(q) {
+      this.intents = await intentService.parseIntents(q)
+      if (this.hasQuery) this.$store.dispatch('query/searchFromText', this.queryClause)
+      if (this.hasWelfare) this.$store.dispatch('welfare/search', this.welfareClause)
+    },
     statusText(status) {
       return STATUS_TEXT[status] || '已回報'
     },

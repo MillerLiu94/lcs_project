@@ -1,6 +1,6 @@
 import http from '../api/http'
 import { isScenario } from '../mocks/demoScenarios'
-import { classifyText } from './intentRules'
+import { classifyText, parseIntents as rulesParseIntents } from './intentRules'
 
 // G3 的可切換縫（swappable seam）：單一開關決定意圖來源。
 //   true  → 本地規則計算，不需要後端（預設）。
@@ -22,5 +22,15 @@ async function classify(text) {
   return data
 }
 
+/**
+ * 解析複合需求為多個意圖（G3 接縫）：mock 用本地規則，否則打真後端。
+ * @returns {Promise<Array<{intent:string,text:string}>>}
+ */
+async function parseIntents(text) {
+  if (USE_MOCK) return rulesParseIntents(text)
+  const { data } = await http.post('/api/intent/parse', { text })
+  return Array.isArray(data) ? data : []
+}
+
 export { USE_MOCK }
-export default { classify }
+export default { classify, parseIntents }

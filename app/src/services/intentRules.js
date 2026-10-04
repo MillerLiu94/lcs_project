@@ -37,7 +37,7 @@ export function classifyText(text) {
 }
 
 // 複合需求：把輸入切成子句（標點／連接詞）再各別分類，彙整不重複的意圖。
-const CLAUSE_SPLIT_RE = /[，、,。；;\n]+|順便|還有|以及|另外|也要|然後/
+const CLAUSE_SPLIT_RE = /[，、,。；;\n]+|順便|還有(?!沒有)|以及|另外|也要|然後/
 
 function splitClauses(text) {
   return String(text || '')

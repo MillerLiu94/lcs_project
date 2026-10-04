@@ -1,6 +1,6 @@
 // 意圖分流模組：把萬用輸入的文字解析成意圖後，決定要導向哪個流程。
 // 單一意圖 → 直接進對應流程；多意圖或無法判斷 → 綜合結果頁（以 ?q= 帶上原話）。
-import { parseIntents } from '../../services/intentRules'
+import intentService from '../../services/intentService'
 
 export default {
   namespaced: true,
@@ -24,7 +24,7 @@ export default {
      */
     async routeFromText({ commit }, text) {
       const source = typeof text === 'string' ? text : ''
-      const intents = parseIntents(source)
+      const intents = await intentService.parseIntents(source)
       commit('remember', { text: source, intents })
 
       if (intents.length === 1) {

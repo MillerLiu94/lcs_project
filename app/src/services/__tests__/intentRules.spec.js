@@ -24,6 +24,12 @@ test('無法判斷回空陣列', () => {
   expect(parseIntents('最近有什麼')).toEqual([])
 })
 
+test('「還有沒有」不被誤切（常見問句）', () => {
+  expect(parseIntents('附近還有沒有積水')).toEqual([
+    { intent: 'query', text: '附近還有沒有積水' },
+  ])
+})
+
 test('同意圖只留一次（保留第一個子句）', () => {
   expect(parseIntents('附近有沒有積水，有沒有路燈')).toEqual([
     { intent: 'query', text: '附近有沒有積水' },
