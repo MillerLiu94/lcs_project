@@ -28,6 +28,11 @@ export default {
     events: [],
     loading: false,
     error: '',
+    // 單一事件詳情（P7）。detailMissing 表示事件不存在或已下架。
+    detail: null,
+    detailLoading: false,
+    detailMissing: false,
+    detailError: '',
   }),
   mutations: {
     setRegion(state, region) {
@@ -51,6 +56,19 @@ export default {
     resetFilters(state) {
       state.region = ''
       state.filters = emptyFilters()
+    },
+    setDetail(state, event) {
+      state.detail = event || null
+    },
+    // 找不到／已下架時為 true，讓畫面顯示「此事件已移除」；載入失敗不算是「已移除」。
+    setDetailMissing(state, missing) {
+      state.detailMissing = Boolean(missing)
+    },
+    setDetailLoading(state, loading) {
+      state.detailLoading = Boolean(loading)
+    },
+    setDetailError(state, error) {
+      state.detailError = error ? String(error) : ''
     },
   },
   actions: {
@@ -98,6 +116,29 @@ export default {
     clearFilters({ commit, dispatch }) {
       commit('resetFilters')
       return dispatch('loadEvents')
+    },
+
+    /**
+     * 載入單一事件詳情（P7）。id 找不到（已下架／未知）回 null 且
+     * detailMissing 為 true，讓畫面顯示「此事件已移除」與回列表。
+     * @returns {Promise<Object|null>} 事件或 null
+     */
+    async loadDetail({ commit }, id) {
+      commit('setDetailLoading', true)
+      commit('setDetailError', '')
+      try {
+        const event = await eventService.get(id)
+        commit('setDetail', event)
+        commit('setDetailMissing', !event)
+        return event
+      } catch (error) {
+        commit('setDetailError', 'load-failed')
+        commit('setDetail', null)
+        commit('setDetailMissing', false)
+        return null
+      } finally {
+        commit('setDetailLoading', false)
+      }
     },
   },
 }
