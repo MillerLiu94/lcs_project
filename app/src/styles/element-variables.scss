@@ -12,9 +12,23 @@ $--color-primary: #a44900;
 // Nova-style rounding + elderly-friendly base type / target sizes
 $--border-radius-base: 12px;
 $--font-size-base: 18px;
+
+// Every input size (base / medium / small / mini) stays >= 48px tall and
+// >= 18px text so no rendered variant drops below the G4 baseline.
 $--input-height: 48px;
 $--input-medium-height: 48px;
-$--input-small-height: 44px;
+$--input-small-height: 48px;
+$--input-mini-height: 48px;
+$--input-medium-font-size: 18px;
+$--input-small-font-size: 18px;
+$--input-mini-font-size: 18px;
+
+// Button text sizes stay >= 18px across medium / small / mini. (Button heights
+// are guaranteed >= 48px / 52px by min-height in element-override.scss, since
+// theme-chalk button variants only override padding + font-size.)
+$--button-medium-font-size: 18px;
+$--button-small-font-size: 18px;
+$--button-mini-font-size: 18px;
 
 // Icon fonts live in `public/element-ui-fonts` so Vite serves them from the root.
 // (The default `fonts` path is relative to theme-chalk's node_modules source,

@@ -68,3 +68,12 @@ body {
 .el-textarea__inner:focus {
   border-color: var(--primary);
 }
+
+/* Keyboard focus ring (G4). theme-chalk sets `.el-input__inner:focus { outline:
+   none }`; this rule has equal specificity and loads later, so it wins and the
+   mandated --ring outline is not suppressed. */
+.el-input__inner:focus-visible,
+.el-textarea__inner:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
