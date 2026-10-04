@@ -1,3 +1,4 @@
+import { vi } from 'vitest'
 import http from '../../api/http'
 import { setupMock, resetMock } from '../../api/mock'
 import eventService from '../eventService'
@@ -35,11 +36,34 @@ describe('eventService.list', () => {
     expect(r[0].placeText).toContain('中華路')
   })
 
+  test('filterRegion 硬性剪除不符地區的事件', async () => {
+    const hit = await eventService.list({ time: 'all', filterRegion: '中華路' })
+    expect(hit.length).toBeGreaterThan(0)
+    hit.forEach((event) =>
+      expect(`${event.placeText} ${event.title}`).toContain('中華路')
+    )
+
+    expect(await eventService.list({ filterRegion: '不存在的地區' })).toEqual([])
+  })
+
+  test('region（排序）不剪除；filterRegion（過濾）才剪除', async () => {
+    const ordered = await eventService.list({ time: 'all', region: '中華路' })
+    const pruned = await eventService.list({ time: 'all', filterRegion: '中華路' })
+    expect(ordered.length).toBeGreaterThan(pruned.length)
+  })
+
   test('預設近期，非全部歷史', async () => {
-    const all = await eventService.list({ time: 'all' })
-    const recent = await eventService.list()
-    expect(recent.length).toBeLessThan(all.length)
-    expect(recent.length).toBeGreaterThan(0)
+    // 以固定系統時間消除日曆月（DEFAULT_TIME='month'）帶來的真實時鐘依賴。
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-10-04T12:00:00+08:00'))
+    try {
+      const all = await eventService.list({ time: 'all' })
+      const recent = await eventService.list()
+      expect(recent.length).toBeLessThan(all.length)
+      expect(recent.length).toBeGreaterThan(0)
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })
 

@@ -8,7 +8,10 @@ import { selectEvents } from './eventRules'
 // 以 VITE_USE_MOCK=false 覆寫；預設使用 mock。
 const USE_MOCK = import.meta.env?.VITE_USE_MOCK !== 'false'
 
-/** 列出事件；未指定時間時預設近期（非全部歷史）。空結果回 []。 */
+/**
+ * 列出事件；未指定時間時預設近期（非全部歷史）。空結果回 []。
+ * params.region 僅影響相關性排序；params.filterRegion 才會硬性剪除不符地區。
+ */
 async function list(params = {}) {
   if (USE_MOCK) return selectEvents(eventStore.all(), params)
   const { data } = await http.get('/api/events', { params })

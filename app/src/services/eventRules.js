@@ -6,6 +6,16 @@ import { sortByRelevance } from '../utils/ranking'
 // 未指定時間時視為「近期」：只看本日曆月，非全部歷史。
 export const DEFAULT_TIME = 'month'
 
+// 與 utils/ranking 相同的欄位集合，讓「地區」硬篩選與相關性排序口徑一致。
+const REGION_FIELDS = ['region', 'placeText', 'address', 'source', 'title']
+
+function regionMatches(event, filterRegion) {
+  if (!filterRegion) return true
+  const needle = String(filterRegion)
+  const haystack = REGION_FIELDS.map((field) => (event && event[field]) || '').join(' ')
+  return haystack.includes(needle)
+}
+
 function textOf(value) {
   if (typeof value === 'string') return value
   if (value && typeof value === 'object' && typeof value.text === 'string') return value.text
@@ -16,6 +26,7 @@ function matches(event, params, now) {
   if (!event) return false
   if (params.type && event.type !== params.type) return false
   if (params.status && event.status !== params.status) return false
+  if (!regionMatches(event, params.filterRegion)) return false
   const range = params.time || DEFAULT_TIME
   if (range !== 'all' && !inRange(event.reportedAt, range, now)) return false
   return true
@@ -23,7 +34,8 @@ function matches(event, params, now) {
 
 /**
  * 依 filters 精確過濾後依相關性排序。
- * region 僅作為排序（「與我相關」），非硬性過濾。
+ * region 作為排序（「與我相關」）；filterRegion 作為硬性過濾（地區 chip）。
+ * 未提供 filterRegion 時維持原有行為，不做地區剪除。
  */
 export function selectEvents(events, params = {}, now = new Date()) {
   const list = Array.isArray(events) ? events : []
