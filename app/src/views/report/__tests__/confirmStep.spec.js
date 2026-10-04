@@ -3,13 +3,14 @@ import Vuex from 'vuex'
 import ConfirmStep from '../ConfirmStep.vue'
 import DoneView from '../DoneView.vue'
 import report from '../../../store/modules/report'
+import myReports from '../../../store/modules/myReports'
 import eventService from '../../../services/eventService'
 
 const localVue = createLocalVue()
 localVue.use(Vuex)
 
 function makeStore() {
-  const store = new Vuex.Store({ modules: { report } })
+  const store = new Vuex.Store({ modules: { report, myReports } })
   store.commit('report/setDescription', '中華路有一個坑洞')
   store.commit('report/setLocation', { mode: 'unconfirmed', text: '中華路有一個坑洞' })
   return store
@@ -98,6 +99,15 @@ describe('ConfirmStep（P3 摘要確認）', () => {
     } finally {
       spy.mockRestore()
     }
+  })
+
+  test('送出成功後會記錄到我的回報', async () => {
+    const store = makeStore()
+    const w = mountStep(store, vi.fn(() => Promise.resolve()))
+    await w.find('.confirm__submit').trigger('click')
+    await flush()
+    expect(store.state.myReports.list).toHaveLength(1)
+    expect(store.state.myReports.list[0].title).toContain('中華路')
   })
 })
 

@@ -104,7 +104,9 @@ export default {
     async confirm() {
       if (this.isSubmitting) return
       try {
-        await this.$store.dispatch('report/submit')
+        const event = await this.$store.dispatch('report/submit')
+        // 送出成功才記錄到「我的回報」；空事件不記錄。
+        if (event) this.$store.commit('myReports/add', event)
         // 先把畫面帶到完成頁（此時護欄還看得到 draft.description），
         // 抵達後才清空草稿；順序顛倒會被護欄彈回 /report。
         await this.$router.push({ name: 'report-done' })
