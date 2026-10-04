@@ -38,3 +38,8 @@ test('手機隱藏三張卡、桌機才顯示', () => {
   expect(viewSrc).toMatch(/\.home__tasks\s*\{[^}]*display:\s*none/)
   expect(viewSrc).toMatch(/@media \(min-width: 1024px\)[\s\S]*\.home__tasks\s*\{[^}]*display:\s*flex/)
 })
+
+test('手機的輸入列固定底部（thumb-first），桌機回到一般流', () => {
+  expect(viewSrc).toMatch(/\.home__ask\s*\{[^}]*position:\s*fixed/)
+  expect(viewSrc).toMatch(/@media \(min-width: 1024px\)[\s\S]*\.home__ask\s*\{[^}]*position:\s*static/)
+})

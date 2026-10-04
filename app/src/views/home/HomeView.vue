@@ -106,6 +106,8 @@ export default {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  /* 手機：留出底部固定輸入列與功能列的空間。 */
+  padding-bottom: 12rem;
 }
 .home__brand {
   display: flex;
@@ -147,7 +149,15 @@ export default {
   grid-template-columns: 1fr;
   gap: var(--space-2);
 }
+/* 手機：輸入列固定在底部，浮在浮動功能列之上，讓拇指隨時可及。 */
 .home__ask {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 5rem;
+  width: calc(100% - 1.5rem);
+  max-width: 32rem;
+  z-index: 10;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
@@ -161,6 +171,7 @@ export default {
   .home {
     max-width: 760px;
     margin-inline: auto;
+    padding-bottom: 0;
   }
   /* 桌面版品牌已移到 TopNav，避免重複。 */
   .home__brand {
@@ -170,6 +181,14 @@ export default {
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
+  }
+  /* 桌機：輸入列回到一般內容流。 */
+  .home__ask {
+    position: static;
+    transform: none;
+    width: auto;
+    max-width: none;
+    z-index: auto;
   }
 }
 </style>
