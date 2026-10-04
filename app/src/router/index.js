@@ -12,6 +12,7 @@ import EventDetailView from '../views/query/EventDetailView.vue'
 import WelfareView from '../views/welfare/WelfareView.vue'
 import ClarifyView from '../views/clarify/ClarifyView.vue'
 import AssistantView from '../views/assistant/AssistantView.vue'
+import MyReportsView from '../views/my/MyReportsView.vue'
 
 Vue.use(VueRouter)
 
@@ -38,6 +39,7 @@ const routes = [
   { path: '/welfare', name: 'welfare', component: WelfareView },
   { path: '/clarify', name: 'clarify', component: ClarifyView },
   { path: '/assistant/:task', name: 'assistant', component: AssistantView },
+  { path: '/my-reports', name: 'my-reports', component: MyReportsView },
 ]
 
 const router = new VueRouter({
