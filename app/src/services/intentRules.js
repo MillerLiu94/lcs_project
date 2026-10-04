@@ -36,4 +36,30 @@ export function classifyText(text) {
   return { intent: 'ambiguous', confidence: 0.3, extracted }
 }
 
-export default { classifyText }
+// 複合需求：把輸入切成子句（標點／連接詞）再各別分類，彙整不重複的意圖。
+const CLAUSE_SPLIT_RE = /[，、,。；;\n]+|順便|還有|以及|另外|也要|然後/
+
+function splitClauses(text) {
+  return String(text || '')
+    .split(CLAUSE_SPLIT_RE)
+    .map((part) => part.trim())
+    .filter(Boolean)
+}
+
+/**
+ * 解析複合需求為多個意圖（依出現順序、不重複意圖）。
+ * @returns {Array<{ intent: string, text: string }>}
+ */
+export function parseIntents(text) {
+  const seen = new Set()
+  const intents = []
+  splitClauses(text).forEach((clause) => {
+    const { intent } = classifyText(clause)
+    if (intent === 'ambiguous' || seen.has(intent)) return
+    seen.add(intent)
+    intents.push({ intent, text: clause })
+  })
+  return intents
+}
+
+export default { classifyText, parseIntents }
