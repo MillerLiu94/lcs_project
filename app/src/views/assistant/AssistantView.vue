@@ -12,7 +12,14 @@
       <p class="assistant__intro">{{ script.intro }}</p>
     </div>
 
-    <div v-if="currentStep" ref="question" tabindex="-1" class="assistant__step">
+    <div v-if="thinking" class="assistant__turn" role="status">
+      <span class="assistant__avatar" aria-hidden="true">社</span>
+      <p class="assistant__thinking">
+        正在理解<span class="assistant__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      </p>
+    </div>
+
+    <div v-else-if="currentStep" ref="question" tabindex="-1" class="assistant__step">
       <template v-if="currentStep.type === 'choice'">
         <h2 class="assistant__question">{{ currentStep.question }}</h2>
         <div class="assistant__choices">
@@ -56,6 +63,9 @@
 import AiPromptBar from '../../components/AiPromptBar.vue'
 import { getScript } from '../../services/assistantScripts'
 
+// 模擬「思考」的短暫延遲（毫秒）；純前端演出，非真運算。
+const THINKING_MS = 700
+
 export default {
   name: 'AssistantView',
   components: { AiPromptBar },
@@ -63,7 +73,7 @@ export default {
     task: { type: String, default: '' },
   },
   data() {
-    return { script: null, stepIndex: 0, answers: {}, text: '' }
+    return { script: null, stepIndex: 0, answers: {}, text: '', thinking: false, thinkTimer: null }
   },
   computed: {
     currentStep() {
@@ -86,8 +96,16 @@ export default {
   created() {
     this.reset(this.task)
   },
+  beforeDestroy() {
+    if (this.thinkTimer) clearTimeout(this.thinkTimer)
+  },
   methods: {
     reset(task) {
+      if (this.thinkTimer) {
+        clearTimeout(this.thinkTimer)
+        this.thinkTimer = null
+      }
+      this.thinking = false
       this.script = getScript(task)
       this.stepIndex = 0
       this.answers = {}
@@ -103,12 +121,19 @@ export default {
       // 文字題留空不得前進。
       if (step.type === 'text' && String(value == null ? '' : value).trim() === '') return
       this.answers = { ...this.answers, [step.id]: value }
-      if (this.stepIndex >= this.script.steps.length - 1) {
-        this.finish()
-        return
-      }
-      this.stepIndex += 1
-      this.focusQuestion()
+      // 先演出「正在理解…」，短暫延遲後才進到下一題或接手流程。
+      this.thinking = true
+      if (this.thinkTimer) clearTimeout(this.thinkTimer)
+      this.thinkTimer = setTimeout(() => {
+        this.thinkTimer = null
+        this.thinking = false
+        if (this.stepIndex >= this.script.steps.length - 1) {
+          this.finish()
+          return
+        }
+        this.stepIndex += 1
+        this.focusQuestion()
+      }, THINKING_MS)
     },
     submitText() {
       this.answer(this.text)
@@ -167,6 +192,23 @@ export default {
   border: 1px solid var(--border); border-radius: var(--radius-card);
   border-top-left-radius: 4px; box-shadow: var(--shadow-float); font-size: var(--font-size-body); line-height: 1.5;
 }
+.assistant__thinking {
+  display: inline-flex; align-items: center; margin: 0; padding: 0.6rem 0.8rem;
+  background: var(--card); color: var(--muted-foreground);
+  border: 1px solid var(--border); border-radius: var(--radius-card);
+  border-top-left-radius: 4px; box-shadow: var(--shadow-float); font-size: var(--font-size-body); line-height: 1.5;
+}
+.assistant__dots { display: inline-flex; gap: 3px; margin-left: 4px; }
+.assistant__dots i {
+  width: 5px; height: 5px; border-radius: 999px; background: currentColor; display: inline-block;
+  animation: assistant-dot 1s infinite ease-in-out;
+}
+.assistant__dots i:nth-child(2) { animation-delay: 0.15s; }
+.assistant__dots i:nth-child(3) { animation-delay: 0.3s; }
+@keyframes assistant-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
 .assistant__step:focus-visible { outline: 3px solid var(--ring); outline-offset: 4px; border-radius: var(--radius-card); }
 .assistant__question { margin: 0 0 0.6rem; font-size: var(--font-size-h3); line-height: var(--line-height-h3); }
 .assistant__choices { display: grid; gap: 0.6rem; }
@@ -183,6 +225,7 @@ export default {
 @media (prefers-reduced-motion: reduce) {
   .assistant__choice { transition: none; }
   .assistant__choice:hover { transform: none; }
+  .assistant__dots i { animation: none; opacity: 0.7; }
 }
 .assistant__form { display: flex; flex-direction: column; gap: 0.75rem; }
 </style>
