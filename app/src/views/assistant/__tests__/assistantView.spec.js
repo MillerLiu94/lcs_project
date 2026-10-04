@@ -11,11 +11,11 @@ localVue.use(Vuex)
 function render(task) {
   const store = new Vuex.Store({ modules: { report, query, myReports } })
   const $router = { push: vi.fn(), replace: vi.fn() }
-  const $route = { params: { task } }
   const w = mount(AssistantView, {
     localVue,
     store,
-    mocks: { $route, $router },
+    propsData: { task },
+    mocks: { $router },
     stubs: ['AiPromptBar', 'router-link'],
   })
   return { w, store, $router }
@@ -61,4 +61,13 @@ test('換題後焦點移到新問題', async () => {
   await w.vm.$nextTick()
   expect(spy).toHaveBeenCalled()
   delete HTMLElement.prototype.focus
+})
+
+test('切換任務會重置對話', async () => {
+  const { w } = render('events')
+  await w.findAll('[data-choice]').at(0).trigger('click')
+  expect(w.text()).toContain('哪一區？')
+  await w.setProps({ task: 'welfare' })
+  expect(w.text()).toContain('想找哪一類的福利或活動？')
+  expect(w.text()).toContain('第 1 題')
 })

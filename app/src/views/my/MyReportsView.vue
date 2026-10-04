@@ -10,6 +10,7 @@
 
     <ul v-else class="my-reports__list">
       <li v-for="item in list" :key="item.id" class="my-reports__item">
+        <p v-if="item.type" class="my-reports__type">{{ item.type }}</p>
         <ResultCard
           :title="item.title || '（未命名回報）'"
           :date-text="item.timeText"
@@ -48,6 +49,12 @@ export default {
 .my-reports__title { margin: 0; font-size: var(--font-size-h2); line-height: var(--line-height-h2); }
 .my-reports__list { display: grid; gap: var(--space-3); margin: 0; padding: 0; list-style: none; }
 .my-reports__item { min-width: 0; }
+.my-reports__type {
+  margin: 0 0 0.25rem;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-meta);
+  font-weight: 700;
+}
 .my-reports__action {
   display: inline-flex; align-items: center; min-height: 48px; padding: 0.5rem 1.25rem;
   background: var(--primary); color: var(--primary-foreground);

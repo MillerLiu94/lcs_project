@@ -29,6 +29,7 @@ test('有紀錄時以卡片列出', () => {
   store.commit('myReports/add', {
     id: 'e-100',
     title: '中華路坑洞',
+    type: '坑洞',
     placeText: '中華路一段',
     timeText: '剛剛',
     status: 'reported',
@@ -36,4 +37,5 @@ test('有紀錄時以卡片列出', () => {
   const w = mountView(store)
   expect(w.findAllComponents({ name: 'ResultCard' })).toHaveLength(1)
   expect(w.text()).toContain('中華路坑洞')
+  expect(w.text()).toContain('坑洞')
 })

@@ -76,7 +76,10 @@ export const ASSISTANT_SCRIPTS = {
 }
 
 export function getScript(task) {
-  return ASSISTANT_SCRIPTS[task] || null
+  // 只認自己的鍵，避免 'constructor'／'toString' 等原型屬性名稱被當成有效任務。
+  return Object.prototype.hasOwnProperty.call(ASSISTANT_SCRIPTS, task)
+    ? ASSISTANT_SCRIPTS[task]
+    : null
 }
 
 export default { ASSISTANT_SCRIPTS, getScript }

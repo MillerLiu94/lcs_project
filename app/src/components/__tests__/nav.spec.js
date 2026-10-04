@@ -57,3 +57,21 @@ test('在事件頁時，首頁不應呈現選中態', async () => {
   const home = w.findAll('[data-nav-item]').at(0)
   expect(home.find('a').classes()).not.toContain('router-link-active')
 })
+
+test('在首頁時，只有首頁呈現選中態', async () => {
+  const localVue = createLocalVue()
+  localVue.use(VueRouter)
+  const router = new VueRouter({
+    routes: [
+      { path: '/', component: { template: '<div />' } },
+      { path: '/assistant/:task', component: { template: '<div />' } },
+    ],
+  })
+  await router.push('/')
+  const w = mount(BottomNav, { localVue, router })
+  const items = w.findAll('[data-nav-item]')
+  expect(items.at(0).find('a').classes()).toContain('router-link-active')
+  items.wrappers.slice(1).forEach((item) => {
+    expect(item.find('a').classes()).not.toContain('router-link-active')
+  })
+})

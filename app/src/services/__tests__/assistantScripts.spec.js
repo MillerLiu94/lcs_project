@@ -5,6 +5,12 @@ test('三個任務都有腳本', () => {
   expect(getScript('nope')).toBeNull()
 })
 
+test('原型鏈屬性名稱不視為有效任務', () => {
+  expect(getScript('constructor')).toBeNull()
+  expect(getScript('toString')).toBeNull()
+  expect(getScript('__proto__')).toBeNull()
+})
+
 test('report.finish 寫入描述並轉往選位置', () => {
   const out = ASSISTANT_SCRIPTS.report.finish({ description: '中華路坑洞' })
   expect(out.commits).toEqual([{ type: 'report/setDescription', payload: '中華路坑洞' }])

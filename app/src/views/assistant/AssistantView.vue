@@ -59,6 +59,9 @@ import { getScript } from '../../services/assistantScripts'
 export default {
   name: 'AssistantView',
   components: { AiPromptBar },
+  props: {
+    task: { type: String, default: '' },
+  },
   data() {
     return { script: null, stepIndex: 0, answers: {}, text: '' }
   },
@@ -74,12 +77,23 @@ export default {
       return this.$store.state.report.draft
     },
   },
+  watch: {
+    // 同一路由不同 task 時元件會被重用，需重置，否則會沿用上一個任務的對話。
+    task(next) {
+      this.reset(next)
+    },
+  },
   created() {
-    const task = this.$route && this.$route.params && this.$route.params.task
-    this.script = getScript(task)
-    if (!this.script) this.$router.replace('/')
+    this.reset(this.task)
   },
   methods: {
+    reset(task) {
+      this.script = getScript(task)
+      this.stepIndex = 0
+      this.answers = {}
+      this.text = ''
+      if (!this.script) this.$router.replace('/')
+    },
     goHome() {
       this.$router.push('/')
     },
