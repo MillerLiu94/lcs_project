@@ -1,25 +1,31 @@
 <template>
   <section class="home">
-    <p class="home__brand">社區資訊平台</p>
-    <h1 class="home__title">今天想查詢或處理什麼？</h1>
+    <p class="home__brand">
+      <span class="home__logo" aria-hidden="true">社</span>
+      <span>社區資訊平台</span>
+    </p>
+    <h1 class="home__title">今天需要幫忙嗎？</h1>
+
+    <BigTaskCard
+      variant="hero"
+      cta="開始回報"
+      icon="Flag"
+      title="回報社區問題"
+      desc="看到路燈壞掉、垃圾沒收，拍照或直接描述都可以"
+      to="/report"
+    />
 
     <div class="home__cards">
       <BigTaskCard
-        icon="Flag"
-        title="回報社區問題"
-        desc="看到路燈壞掉、垃圾沒收等狀況"
-        to="/report"
-      />
-      <BigTaskCard
         icon="MapPin"
-        title="看看附近發生什麼事"
-        desc="查詢社區最近發生的事件"
+        title="附近事件"
+        desc="看看社區大小事"
         to="/events"
       />
       <BigTaskCard
         icon="Gift"
-        title="找福利和活動"
-        desc="搜尋補助、課程與社區活動"
+        title="福利活動"
+        desc="補助、課程、活動"
         to="/welfare"
       />
     </div>
@@ -96,33 +102,56 @@ export default {
 .home {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: var(--space-3);
 }
 .home__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   margin: 0;
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
+  font-size: var(--font-size-meta);
+  font-weight: 800;
   color: var(--primary);
+}
+.home__logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-pill);
+  background: var(--primary);
+  color: var(--primary-foreground);
+  font-size: 0.9rem;
 }
 .home__title {
   margin: 0;
-  font-size: 1.75rem;
-  line-height: 1.3;
+  font-size: var(--font-size-h2);
+  line-height: var(--line-height-h2);
 }
 .home__cards {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 0.75rem;
+  gap: var(--space-2);
 }
-@media (min-width: 1024px) {
+@media (min-width: 768px) {
   .home__cards {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr 1fr;
   }
 }
 .home__ask {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+@media (min-width: 1024px) {
+  .home {
+    max-width: 760px;
+    margin-inline: auto;
+  }
+  /* 桌面版品牌已移到 TopNav，避免重複。 */
+  .home__brand {
+    display: none;
+  }
 }
 </style>
