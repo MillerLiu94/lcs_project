@@ -38,5 +38,33 @@ export default {
 
       return { name: ROUTE_BY_INTENT[intent] || 'clarify' }
     },
+
+    /**
+     * P12 釐清：把使用者在釐清畫面的選擇轉成 vue-router 位置。
+     * - welfare：直接前往福利搜尋。
+     * - event：用 lastText 重新判斷回報／查詢（S6 §1.2）；能判斷就自動前往，
+     *   回報時把原話帶入草稿；仍無法判斷 → 回傳 { name:'clarify-event' }，
+     *   這是「同頁第二層」的描述子（非 router route），由 ClarifyView 接手。
+     * - report／query：事件第二層的明確選擇。
+     * @returns {Promise<{ name: string }>}
+     */
+    async resolveChoice({ commit, state }, choice) {
+      if (choice === 'welfare') return { name: 'welfare' }
+      if (choice === 'query') return { name: 'events' }
+      if (choice === 'report') {
+        commit('report/setDescription', state.lastText, { root: true })
+        return { name: 'report' }
+      }
+      if (choice !== 'event') return { name: 'clarify' }
+
+      const text = state.lastText || ''
+      const { intent } = await intentService.classify(text)
+      if (intent === 'report') {
+        commit('report/setDescription', text, { root: true })
+        return { name: 'report' }
+      }
+      if (intent === 'query') return { name: 'events' }
+      return { name: 'clarify-event' }
+    },
   },
 }
