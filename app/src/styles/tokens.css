@@ -76,6 +76,11 @@
   --font-latin: "Atkinson Hyperlegible", var(--font-sans);
 }
 
+/* Apply the CJK-first stack globally (fonts are loaded in index.html). */
+body {
+  font-family: var(--font-sans);
+}
+
 /* --------------------------- Application tier ----------------------------- */
 /* Names follow shadcn/ui conventions so the tokens drop straight into
    Tailwind + shadcn/ui components. `--primary` is the brand/CTA. */
