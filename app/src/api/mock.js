@@ -1,6 +1,8 @@
 import MockAdapter from 'axios-mock-adapter'
 import { classifyText } from '../services/intentRules'
 import { scorePlaces } from '../services/placeScoring'
+import { selectEvents } from '../services/eventRules'
+import eventStore from '../services/eventStore'
 import places from '../mocks/places.json'
 
 // 單一 mock adapter 實例（idempotent），僅供開發／測試使用。
@@ -37,7 +39,32 @@ function registerPlaces(adapter) {
   })
 }
 
-const REGISTRATIONS = [registerHealth, registerIntent, registerPlaces]
+function registerEvents(adapter) {
+  // 列表：查詢參數（region/time/type/status）交由純規則處理。
+  adapter.onGet('/api/events').reply((config) => {
+    const params = config.params || {}
+    return [200, selectEvents(eventStore.all(), params)]
+  })
+
+  // 新增：建立事件並存入共用記憶體來源。
+  adapter.onPost('/api/events').reply((config) => {
+    let draft = {}
+    try {
+      draft = typeof config.data === 'string' ? JSON.parse(config.data) : config.data || {}
+    } catch (error) {
+      draft = {}
+    }
+    return [201, eventStore.add(draft)]
+  })
+
+  // 詳情：未知 id 回 null（代表已下架）。
+  adapter.onGet(/\/api\/events\/[^/]+$/).reply((config) => {
+    const id = decodeURIComponent(String(config.url).split('/').pop())
+    return [200, eventStore.find(id)]
+  })
+}
+
+const REGISTRATIONS = [registerHealth, registerIntent, registerPlaces, registerEvents]
 
 function registerAll(adapter) {
   REGISTRATIONS.forEach((register) => register(adapter))
@@ -58,10 +85,11 @@ export function getMock() {
   return mock
 }
 
-// 測試用：清空歷史與一次性 handler，重新套用預設註冊。
+// 測試用：清空歷史與一次性 handler，並還原種子，重新套用預設註冊。
 export function resetMock() {
   if (!mock) return null
   mock.reset()
+  eventStore.reset()
   registerAll(mock)
   return mock
 }
