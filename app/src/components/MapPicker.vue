@@ -16,39 +16,16 @@
 </template>
 
 <script>
-// Google Maps 的唯一封裝處：其餘畫面不直接碰 google。
-// 沒有金鑰或 google 尚未載入時，載入器是 no-op，改顯示文字提示（不丟例外）。
+import { loadGoogleMaps } from '../services/googleMaps'
+
+// Google Maps 的唯一封裝處已抽到 services/googleMaps.js（與 EventMap 共用）。
 // S6 §2.3：地圖是低精度首選。沒有真實錨點時只給「區域中心」當初始視野，
 // 絕不自動成為位置；一定要使用者點選／鍵盤放置圖釘才發出座標。
-const KEY = (import.meta.env && import.meta.env.VITE_GOOGLE_MAPS_KEY) || ''
 const STEP = 0.0005
 // 僅為地圖初始視野（台北中正／萬華一帶），不是預選位置。
 const DEFAULT_VIEW = { lat: 25.035, lng: 121.51 }
 
 let uid = 0
-
-function mapsOrNull() {
-  if (typeof window === 'undefined' || !window.google) return null
-  return window.google.maps || null
-}
-
-// 回傳 Promise<google.maps|null>；測試環境（無金鑰）永遠回 null，不注入真實 API。
-function loadGoogleMaps() {
-  const ready = mapsOrNull()
-  if (ready) return Promise.resolve(ready)
-  if (typeof document === 'undefined' || !KEY) return Promise.resolve(null)
-
-  return new Promise((resolve) => {
-    const script = document.createElement('script')
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(KEY)}`
-    script.async = true
-    script.defer = true
-    script.dataset.googleMaps = 'true'
-    script.addEventListener('load', () => resolve(mapsOrNull()))
-    script.addEventListener('error', () => resolve(null))
-    document.head.appendChild(script)
-  })
-}
 
 export default {
   name: 'MapPicker',
