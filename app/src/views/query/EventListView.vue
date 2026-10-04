@@ -127,6 +127,12 @@ export default {
     },
   },
   created() {
+    // 由萬用輸入帶著原話前來（?q=）：套用辨識出的類型／地區後載入。
+    const q = (this.$route && this.$route.query && this.$route.query.q) || ''
+    if (q) {
+      this.$store.dispatch('query/searchFromText', q)
+      return
+    }
     this.$store.dispatch('query/loadEvents')
   },
   methods: {

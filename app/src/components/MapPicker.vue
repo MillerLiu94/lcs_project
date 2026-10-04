@@ -18,9 +18,12 @@
 <script>
 // Google Maps 的唯一封裝處：其餘畫面不直接碰 google。
 // 沒有金鑰或 google 尚未載入時，載入器是 no-op，改顯示文字提示（不丟例外）。
-// S6 §14.4：沒有可錨定的真實點（候選／目前位置）前，地圖不建立、也絕不發出座標。
+// S6 §2.3：地圖是低精度首選。沒有真實錨點時只給「區域中心」當初始視野，
+// 絕不自動成為位置；一定要使用者點選／鍵盤放置圖釘才發出座標。
 const KEY = (import.meta.env && import.meta.env.VITE_GOOGLE_MAPS_KEY) || ''
 const STEP = 0.0005
+// 僅為地圖初始視野（台北中正／萬華一帶），不是預選位置。
+const DEFAULT_VIEW = { lat: 25.035, lng: 121.51 }
 
 let uid = 0
 
@@ -60,7 +63,7 @@ export default {
       ready: false,
       mapsLib: null,
       descriptionId: `map-picker-desc-${uid}`,
-      unavailableNote: '地圖需要一個大概的位置才能顯示。可以改用文字描述，或選「不確定，先送出」。',
+      unavailableNote: '地圖暫時無法顯示。可以改用文字描述，或選「不確定，先送出」。',
       interactionHint: '在地圖上點一下，或用鍵盤方向鍵移動圖釘。',
     }
   },
@@ -68,12 +71,12 @@ export default {
     ariaLabel() {
       return '選擇事件位置的地圖'
     },
-    // 有真實錨點才允許渲染／操作地圖。
+    // 有真實錨點才是精確中心；否則以區域中心當視野。
     hasAnchor() {
       return typeof this.lat === 'number' && typeof this.lng === 'number'
     },
-    initialCenter() {
-      return this.hasAnchor ? { lat: this.lat, lng: this.lng } : null
+    viewCenter() {
+      return this.hasAnchor ? { lat: this.lat, lng: this.lng } : { ...DEFAULT_VIEW }
     },
   },
   watch: {
@@ -89,53 +92,53 @@ export default {
     this.syncMap()
   },
   methods: {
-    // 錨點出現前不建圖；出現後才建立，之後只更新中心。
+    // 有地圖後只更新中心；尚未建立且已載入 Google Maps 時才建立。
     syncMap() {
       if (!this.mapsLib || !this.$refs.canvas) return
       if (this.ready) {
         this.recenter()
         return
       }
-      if (this.hasAnchor) this.buildMap()
+      this.buildMap()
     },
+    // 沒有真實錨點時仍建立地圖（區域中心僅為視野），但不放圖釘、不發座標。
     buildMap() {
-      const maps = this.mapsLib
-      const center = this.initialCenter
-      const map = new maps.Map(this.$refs.canvas, { center, zoom: 16 })
-      const markerOptions = { position: center, map }
-      if (this.marker) markerOptions.draggable = true
-      const pin = new maps.Marker(markerOptions)
+      const map = new this.mapsLib.Map(this.$refs.canvas, {
+        center: this.viewCenter,
+        zoom: this.hasAnchor ? 16 : 14,
+      })
       map.addListener('click', (event) => this.place(event.latLng.lat(), event.latLng.lng()))
+      this.map = map
+      if (this.hasAnchor) this.createPin(this.viewCenter)
+      this.ready = true
+    },
+    createPin(position) {
+      const options = { position, map: this.map }
+      if (this.marker) options.draggable = true
+      this.pin = new this.mapsLib.Marker(options)
       if (this.marker) {
-        pin.addListener('dragend', () => {
-          const pos = pin.getPosition()
+        this.pin.addListener('dragend', () => {
+          const pos = this.pin.getPosition()
           this.place(pos.lat(), pos.lng())
         })
       }
-      this.map = map
-      this.pin = pin
-      this.ready = true
     },
-    // 使用者任何一種操作都收斂到這一處；未錨定或未就緒時一律不發出座標。
+    // 使用者操作收斂到這一處：放置／移動圖釘後才發出座標。
     place(lat, lng) {
-      if (!this.ready || !this.hasAnchor) return
-      if (typeof lat !== 'number' || typeof lng !== 'number') return
+      if (!this.ready || typeof lat !== 'number' || typeof lng !== 'number') return
       if (this.pin) this.pin.setPosition({ lat, lng })
+      else if (this.marker) this.createPin({ lat, lng })
       this.$emit('pick', lat, lng)
     },
     onKeydown(event) {
-      if (!this.ready || !this.pin) return
-      const moves = {
-        ArrowUp: [STEP, 0],
-        ArrowDown: [-STEP, 0],
-        ArrowLeft: [0, -STEP],
-        ArrowRight: [0, STEP],
-      }
+      if (!this.ready) return
+      const moves = { ArrowUp: [STEP, 0], ArrowDown: [-STEP, 0], ArrowLeft: [0, -STEP], ArrowRight: [0, STEP] }
       const move = moves[event.key]
-      const base = this.pin.getPosition()
-      if (!move || !base) return
+      if (!move) return
       event.preventDefault()
-      this.place(base.lat() + move[0], base.lng() + move[1])
+      const pos = this.pin && this.pin.getPosition()
+      const base = pos ? { lat: pos.lat(), lng: pos.lng() } : this.viewCenter
+      this.place(base.lat + move[0], base.lng + move[1])
     },
     recenter() {
       if (!this.ready || !this.hasAnchor) return

@@ -9,6 +9,9 @@ const ROUTE_BY_INTENT = {
   ambiguous: 'clarify',
 }
 
+// 需要帶著原話前往的流程：以 ?q= 攜帶，讓目的畫面接手（不讓辨識結果靜默遺失）。
+const TEXT_CARRYING_INTENTS = ['query', 'welfare']
+
 export default {
   namespaced: true,
   state: () => ({
@@ -24,7 +27,8 @@ export default {
   actions: {
     /**
      * 分類文字並回傳 vue-router 位置。
-     * report 時同時把原話寫入 report.draft.description。
+     * report 時把原話寫入 report.draft.description。
+     * query／welfare 時以 ?q= 帶著原話，讓目的畫面接手（不讓辨識結果遺失）。
      * @returns {Promise<{ name: string, params?: object, query?: object }>}
      */
     async routeFromText({ commit }, text) {
@@ -36,7 +40,9 @@ export default {
         commit('report/setDescription', text, { root: true })
       }
 
-      return { name: ROUTE_BY_INTENT[intent] || 'clarify' }
+      const route = { name: ROUTE_BY_INTENT[intent] || 'clarify' }
+      if (TEXT_CARRYING_INTENTS.includes(intent)) route.query = { q: text }
+      return route
     },
 
     /**

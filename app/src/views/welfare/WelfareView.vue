@@ -67,6 +67,11 @@ export default {
       return this.phase === 'loading' || this.phase === 'processing'
     },
   },
+  created() {
+    // 由萬用輸入帶著原話前來（?q=）：自動填入並直接搜尋，不讓使用者重打。
+    const q = (this.$route && this.$route.query && this.$route.query.q) || ''
+    if (q) this.$store.dispatch('welfare/search', q)
+  },
   methods: {
     onSearch(text) {
       this.$store.dispatch('welfare/search', text)

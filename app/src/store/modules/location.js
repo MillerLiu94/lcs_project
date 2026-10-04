@@ -22,7 +22,8 @@ export default {
     permission: 'prompt',
   }),
   getters: {
-    // 「已確認的位置是否帶真實座標」：無座標（低精度／未確認）一律 false。
+    // 「已確認的位置是否帶真實座標」：座標只能來自定位、候選或使用者點選；
+    // 未確認（無座標）一律 false。
     hasCoordinates(state) {
       return coordinatesOf(state.selected) !== null
     },

@@ -36,6 +36,20 @@ describe('WelfareView（P8–P11 狀態切換）', () => {
     w.destroy()
   })
 
+  test('由 ?q= 帶著原話進來：自動帶入並直接搜尋（不重打）', async () => {
+    const store = makeStore()
+    const w = mount(WelfareView, {
+      localVue,
+      store,
+      mocks: { $route: { query: { q: '老人活動' } } },
+    })
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(store.state.welfare.keyword).toBe('老人活動')
+    expect(store.state.welfare.phase).toBe('done')
+    expect(w.findComponent({ name: 'SearchInput' }).props('value')).toBe('老人活動')
+    w.destroy()
+  })
+
   test('搜尋中顯示三段式進度，不白屏', () => {
     const store = makeStore()
     store.commit('welfare/setKeyword', '活動')

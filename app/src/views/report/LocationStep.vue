@@ -89,6 +89,7 @@ export default {
       if (sel.mode === 'candidate') {
         return [sel.name, sel.address].filter(Boolean).join('・')
       }
+      if (sel.mode === 'low-precision') return '大概位置：你在地圖上點選的範圍。'
       return '已標記你在地圖上點選的位置。'
     },
   },
@@ -136,7 +137,10 @@ export default {
     },
     onPick(lat, lng) {
       const mode = this.candidates.length > 0 ? 'map-confirm' : 'low-precision'
-      this.$store.commit('location/setSelected', { mode, lat, lng })
+      const selected = { mode, lat, lng }
+      this.$store.commit('location/setSelected', selected)
+      // S6 §2.3 首選：使用者在地圖上點出的低精度位置直接記入草稿。
+      if (mode === 'low-precision') this.$store.commit('report/setLocation', selected)
     },
     confirm() {
       if (!this.hasCoordinates) return

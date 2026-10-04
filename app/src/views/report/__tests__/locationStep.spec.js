@@ -103,6 +103,40 @@ describe('LocationStep（P2 確認位置）', () => {
     }
   })
 
+  test('開地圖但未放置圖釘：維持未確認、不自動確認', async () => {
+    const store = makeStore()
+    const w = mountStep(store)
+    await w.findAll('.location__stack button').at(2).trigger('click')
+    expect(w.vm.situation).toBe('map')
+    expect(w.findComponent({ name: 'MapPicker' }).exists()).toBe(true)
+    expect(store.state.location.selected).toBeNull()
+    expect(store.state.report.draft.location).toBeNull()
+    expect(store.getters['location/hasCoordinates']).toBe(false)
+    expect(w.find('.location__confirm').attributes('disabled')).toBe('disabled')
+  })
+
+  test('在地圖上放置圖釘（無候選）→ 記錄低精度大概位置、可確認', async () => {
+    const store = makeStore()
+    const push = vi.fn()
+    const w = mountStep(store, push)
+    await w.findAll('.location__stack button').at(2).trigger('click')
+    w.findComponent({ name: 'MapPicker' }).vm.$emit('pick', 25.04, 121.51)
+    await new Promise((resolve) => setTimeout(resolve, 0))
+    expect(store.state.location.selected).toMatchObject({
+      mode: 'low-precision',
+      lat: 25.04,
+      lng: 121.51,
+    })
+    expect(store.state.report.draft.location).toMatchObject({
+      mode: 'low-precision',
+      lat: 25.04,
+      lng: 121.51,
+    })
+    expect(w.text()).toContain('大概位置')
+    expect(store.getters['location/hasCoordinates']).toBe(true)
+    expect(w.find('.location__confirm').attributes('disabled')).toBeUndefined()
+  })
+
   test('在地圖模式下仍可改用文字描述（文字路徑永遠存在）', async () => {
     const w = mountStep(makeStore())
     await w.findAll('.location__stack button').at(2).trigger('click')

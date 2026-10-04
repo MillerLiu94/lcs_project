@@ -17,18 +17,18 @@ describe('intent.routeFromText', () => {
     expect(r.name).toBe('clarify')
   })
 
-  test('query 導向 events', async () => {
+  test('query 導向 events 並以 ?q= 帶上原話（辨識結果不遺失）', async () => {
     const store = makeStore()
     await expect(
       store.dispatch('intent/routeFromText', '附近有沒有積水'),
-    ).resolves.toEqual({ name: 'events' })
+    ).resolves.toEqual({ name: 'events', query: { q: '附近有沒有積水' } })
   })
 
-  test('welfare 導向 welfare', async () => {
+  test('welfare 導向 welfare 並以 ?q= 帶上原話（可直接接手搜尋）', async () => {
     const store = makeStore()
     await expect(
       store.dispatch('intent/routeFromText', '這個月有什麼老人活動'),
-    ).resolves.toEqual({ name: 'welfare' })
+    ).resolves.toEqual({ name: 'welfare', query: { q: '這個月有什麼老人活動' } })
   })
 
   test('report 導向 report 並帶入 draft.description', async () => {

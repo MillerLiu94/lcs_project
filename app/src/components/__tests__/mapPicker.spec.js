@@ -3,6 +3,8 @@ import MapPicker from '../MapPicker.vue'
 
 const ANCHOR = { lat: 25.0455, lng: 121.509 }
 const STEP = 0.0005
+// 與元件相同的區域中心：只作為初始視野，不是預選位置。
+const DEFAULT_VIEW = { lat: 25.035, lng: 121.51 }
 
 function settle() {
   return new Promise((resolve) => setTimeout(resolve, 0))
@@ -50,13 +52,32 @@ describe('MapPicker', () => {
     expect(w.vm.ready).toBe(false)
   })
 
-  test('沒有錨點時不建立地圖，方向鍵不發出座標（不合成）', async () => {
+  test('沒有錨點時仍建立粗略地圖（區域中心僅為視野），且不自動發出座標', async () => {
     installGoogleMaps()
     const w = mount(MapPicker)
     await settle()
-    expect(w.vm.ready).toBe(false)
-    await w.find('.map-picker__canvas').trigger('keydown', { key: 'ArrowUp' })
+    expect(w.vm.ready).toBe(true)
+    expect(w.vm.map.options.center).toEqual(DEFAULT_VIEW)
+    expect(w.find('.map-picker__hint').exists()).toBe(true)
     expect(w.emitted('pick')).toBeFalsy()
+  })
+
+  test('沒有錨點時，方向鍵可放置圖釘並發出 pick（非拖曳替代操作）', async () => {
+    installGoogleMaps()
+    const w = mount(MapPicker)
+    await settle()
+    await w.find('.map-picker__canvas').trigger('keydown', { key: 'ArrowUp' })
+    const [lat, lng] = w.emitted('pick')[0]
+    expect(lat).toBeCloseTo(DEFAULT_VIEW.lat + STEP)
+    expect(lng).toBeCloseTo(DEFAULT_VIEW.lng)
+  })
+
+  test('沒有錨點時，點選地圖可放置圖釘並發出 pick', async () => {
+    const { listeners } = installGoogleMaps()
+    const w = mount(MapPicker)
+    await settle()
+    listeners.click[0]({ latLng: { lat: () => 25.05, lng: () => 121.51 } })
+    expect(w.emitted('pick')[0]).toEqual([25.05, 121.51])
   })
 
   test('錨定後，方向鍵移動圖釘會發出 pick（非拖曳替代操作）', async () => {

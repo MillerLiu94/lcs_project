@@ -1,6 +1,7 @@
 // 查詢目前事件模組（S7 §2.2）：集中管理篩選條件與事件清單。
 // 只負責狀態與呼叫 eventService；不在元件裡直接打 API（G2）。
 import eventService from '../../services/eventService'
+import { extract } from '../../utils/textExtract'
 
 // 預設條件為「近期」：未特別指定時看本日曆月，而非全部歷史（S1 §3.2.2）。
 const DEFAULT_FILTERS = { time: 'month', type: '', status: '' }
@@ -115,6 +116,19 @@ export default {
     /** 回到預設（近期、無地區、無類型／狀態）並重新載入。 */
     clearFilters({ commit, dispatch }) {
       commit('resetFilters')
+      return dispatch('loadEvents')
+    },
+
+    /**
+     * 由萬用輸入帶入的原話：抽出事件類型／地點轉成現有篩選後載入，
+     * 不讓辨識結果靜默遺失（不新增獨立關鍵字引擎）。
+     * @returns {Promise<Array>}
+     */
+    searchFromText({ commit, dispatch }, text) {
+      const { eventType, locationText } = extract(text)
+      commit('resetFilters')
+      if (locationText) commit('setRegion', locationText)
+      if (eventType) commit('setFilters', { type: eventType })
       return dispatch('loadEvents')
     },
 

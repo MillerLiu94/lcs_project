@@ -65,6 +65,36 @@ describe('EventListView（P5 查詢目前事件）', () => {
     expect(w.text()).toContain('待處理')
   })
 
+  test('由 ?q= 帶著原話進來：抽出的類型成為篩選（不是未篩選清單）', async () => {
+    const spy = vi.spyOn(eventService, 'list').mockResolvedValue([])
+    const store = makeStore()
+    const w = mount(EventListView, {
+      localVue,
+      store,
+      stubs: { RouterLink: RouterLinkStub },
+      mocks: { $route: { query: { q: '附近有沒有積水' } } },
+    })
+    await flush()
+    expect(store.state.query.filters.type).toBe('積水')
+    expect(spy).toHaveBeenLastCalledWith(expect.objectContaining({ type: '積水' }))
+    w.destroy()
+  })
+
+  test('由 ?q= 帶著原話進來：抽出的地點成為地區篩選', async () => {
+    vi.spyOn(eventService, 'list').mockResolvedValue([])
+    const store = makeStore()
+    const w = mount(EventListView, {
+      localVue,
+      store,
+      stubs: { RouterLink: RouterLinkStub },
+      mocks: { $route: { query: { q: '中華路有沒有坑洞' } } },
+    })
+    await flush()
+    expect(store.state.query.region).toBe('中華路')
+    expect(store.state.query.filters.type).toBe('坑洞')
+    w.destroy()
+  })
+
   test('空結果顯示空狀態並提供「回報一個問題」到 /report', async () => {
     vi.spyOn(eventService, 'list').mockResolvedValue([])
     const w = mountView(makeStore())
