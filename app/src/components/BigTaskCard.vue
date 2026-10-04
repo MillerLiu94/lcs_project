@@ -1,11 +1,17 @@
 <template>
-  <router-link class="big-task-card" :to="to">
+  <router-link
+    class="big-task-card"
+    :class="`big-task-card--${variant}`"
+    :to="to"
+    :data-variant="variant"
+  >
     <span class="big-task-card__icon" aria-hidden="true">
-      <component :is="iconComponent" v-if="iconComponent" :size="32" />
+      <component :is="iconComponent" v-if="iconComponent" :size="variant === 'hero' ? 28 : 32" />
     </span>
     <span class="big-task-card__body">
       <span class="big-task-card__title">{{ title }}</span>
       <span v-if="desc" class="big-task-card__desc">{{ desc }}</span>
+      <span v-if="variant === 'hero' && cta" class="big-task-card__cta">{{ cta }}</span>
     </span>
   </router-link>
 </template>
@@ -36,6 +42,8 @@ export default {
     title: { type: String, required: true },
     desc: { type: String, default: '' },
     to: { type: [String, Object], required: true },
+    variant: { type: String, default: 'default' },
+    cta: { type: String, default: '' },
   },
   computed: {
     iconComponent() {
@@ -69,6 +77,20 @@ export default {
   outline: 3px solid var(--ring);
   outline-offset: 2px;
 }
+/* Hero：主行動卡，較大、暖底漸層、帶 CTA。 */
+.big-task-card--hero {
+  align-items: flex-start;
+  min-height: 120px;
+  padding: 1.5rem;
+  background: linear-gradient(180deg, var(--card), color-mix(in srgb, var(--accent) 45%, var(--card)));
+}
+.big-task-card--hero .big-task-card__icon {
+  width: 64px;
+  height: 64px;
+}
+.big-task-card--hero .big-task-card__title {
+  font-size: var(--font-size-h3);
+}
 .big-task-card__icon {
   display: inline-flex;
   align-items: center;
@@ -94,6 +116,19 @@ export default {
   font-size: 1rem;
   color: var(--muted-foreground);
   line-height: 1.4;
+}
+.big-task-card__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  align-self: flex-start;
+  margin-top: 0.75rem;
+  min-height: 48px;
+  padding: 0 1.25rem;
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-radius: var(--radius-pill);
+  font-weight: 700;
 }
 @media (prefers-reduced-motion: reduce) {
   .big-task-card {
