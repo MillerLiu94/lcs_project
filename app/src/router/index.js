@@ -12,6 +12,7 @@ import EventDetailView from '../views/query/EventDetailView.vue'
 import WelfareView from '../views/welfare/WelfareView.vue'
 import AssistantView from '../views/assistant/AssistantView.vue'
 import MyReportsView from '../views/my/MyReportsView.vue'
+import MyReportDetailView from '../views/my/MyReportDetailView.vue'
 import ResultsView from '../views/results/ResultsView.vue'
 
 Vue.use(VueRouter)
@@ -47,6 +48,7 @@ const routes = [
   { path: '/results', name: 'results', component: ResultsView },
   { path: '/assistant/:task', name: 'assistant', component: AssistantView, props: true },
   { path: '/my-reports', name: 'my-reports', component: MyReportsView },
+  { path: '/my-reports/:id', name: 'my-report-detail', component: MyReportDetailView },
 ]
 
 const router = new VueRouter({
