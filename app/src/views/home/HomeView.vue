@@ -5,29 +5,32 @@
       <span>社區資訊平台</span>
     </p>
     <h1 class="home__title">今天需要幫忙嗎？</h1>
+    <p class="home__lead">回報問題、查附近事件、找福利活動，都可以在這裡開始。</p>
 
-    <BigTaskCard
-      variant="hero"
-      cta="開始回報"
-      icon="Flag"
-      title="回報社區問題"
-      desc="看到路燈壞掉、垃圾沒收，拍照或直接描述都可以"
-      to="/assistant/report"
-    />
+    <div class="home__tasks">
+      <BigTaskCard
+        variant="hero"
+        cta="開始回報"
+        icon="Flag"
+        title="回報社區問題"
+        desc="看到路燈壞掉、垃圾沒收，拍照或直接描述都可以"
+        to="/assistant/report"
+      />
 
-    <div class="home__cards">
-      <BigTaskCard
-        icon="MapPin"
-        title="附近事件"
-        desc="看看社區大小事"
-        to="/assistant/events"
-      />
-      <BigTaskCard
-        icon="Gift"
-        title="福利活動"
-        desc="補助、課程、活動"
-        to="/assistant/welfare"
-      />
+      <div class="home__cards">
+        <BigTaskCard
+          icon="MapPin"
+          title="附近事件"
+          desc="看看社區大小事"
+          to="/assistant/events"
+        />
+        <BigTaskCard
+          icon="Gift"
+          title="福利活動"
+          desc="補助、課程、活動"
+          to="/assistant/welfare"
+        />
+      </div>
     </div>
 
     <form class="home__ask" @submit.prevent="submit">
@@ -129,20 +132,30 @@ export default {
   font-size: var(--font-size-display);
   line-height: var(--line-height-display);
 }
+.home__lead {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-body);
+}
+/* 手機沒有這三張卡：底部功能列已提供相同入口。桌機才顯示。 */
+.home__tasks {
+  display: none;
+}
 .home__cards {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-2);
 }
-@media (min-width: 768px) {
-  .home__cards {
-    grid-template-columns: 1fr 1fr;
-  }
-}
 .home__ask {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+}
+@media (min-width: 768px) {
+  .home__cards {
+    grid-template-columns: 1fr 1fr;
+  }
 }
 @media (min-width: 1024px) {
   .home {
@@ -152,6 +165,11 @@ export default {
   /* 桌面版品牌已移到 TopNav，避免重複。 */
   .home__brand {
     display: none;
+  }
+  .home__tasks {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
   }
 }
 </style>
