@@ -4,6 +4,7 @@ import intent from './modules/intent'
 import report from './modules/report'
 import location from './modules/location'
 import query from './modules/query'
+import welfare from './modules/welfare'
 
 Vue.use(Vuex)
 
@@ -13,5 +14,6 @@ export default new Vuex.Store({
     report,
     location,
     query,
+    welfare,
   },
 })
