@@ -2,8 +2,10 @@ import MockAdapter from 'axios-mock-adapter'
 import { classifyText } from '../services/intentRules'
 import { scorePlaces } from '../services/placeScoring'
 import { selectEvents } from '../services/eventRules'
+import { selectWelfare } from '../services/welfareRules'
 import eventStore from '../services/eventStore'
 import places from '../mocks/places.json'
+import welfare from '../mocks/welfare.json'
 
 // 單一 mock adapter 實例（idempotent），僅供開發／測試使用。
 let mock = null
@@ -64,7 +66,14 @@ function registerEvents(adapter) {
   })
 }
 
-const REGISTRATIONS = [registerHealth, registerIntent, registerPlaces, registerEvents]
+function registerWelfare(adapter) {
+  // 福利／活動聚合：查詢參數（type/target/time/region）交由純規則整理。
+  adapter.onGet('/api/welfare').reply((config) => {
+    return [200, selectWelfare(welfare, config.params || {})]
+  })
+}
+
+const REGISTRATIONS = [registerHealth, registerIntent, registerPlaces, registerEvents, registerWelfare]
 
 function registerAll(adapter) {
   REGISTRATIONS.forEach((register) => register(adapter))
