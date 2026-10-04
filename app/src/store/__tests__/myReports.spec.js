@@ -28,3 +28,29 @@ test('同 id 重複 add 不重複列', () => {
   store.commit('myReports/add', EVENT)
   expect(store.state.myReports.list).toHaveLength(1)
 })
+
+const EVENT_WITH_DETAIL = {
+  id: 'e-200',
+  title: '路燈不亮',
+  type: '路燈',
+  placeText: '汀州路',
+  timeText: '昨晚',
+  status: 'reported',
+  reportedAt: '2026-10-05T20:00:00+08:00',
+  description: '整排路燈不亮',
+  photo: 'data:image/png;base64,AAA',
+}
+
+test('add 會保留 description 與 photo', () => {
+  const store = new Vuex.Store({ modules: { myReports } })
+  store.commit('myReports/add', EVENT_WITH_DETAIL)
+  expect(store.state.myReports.list[0].description).toBe('整排路燈不亮')
+  expect(store.state.myReports.list[0].photo).toBe('data:image/png;base64,AAA')
+})
+
+test('remove 會移除對應 id', () => {
+  const store = new Vuex.Store({ modules: { myReports } })
+  store.commit('myReports/add', EVENT_WITH_DETAIL)
+  store.commit('myReports/remove', 'e-200')
+  expect(store.state.myReports.list).toHaveLength(0)
+})
