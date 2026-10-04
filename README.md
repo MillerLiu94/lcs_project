@@ -57,6 +57,65 @@ npm run dev        # 開發伺服器，預設 http://localhost:5173
 
 ---
 
+## 安裝 pnpm（給想用 pnpm 的開發者）
+
+本專案以 **pnpm 11** 開發。以下任選一種安裝方式，裝完用 `pnpm -v` 確認版本。
+
+### 方法 1：Corepack（推薦；Node 內建，免額外安裝）
+
+Node 16.9 以上（含 18／20／22／24）都內建 Corepack，可直接啟用 pnpm：
+
+```bash
+corepack enable                         # 啟用 pnpm / yarn 的 shim
+corepack prepare pnpm@11 --activate     # 指定版本（或改用 @latest）
+pnpm -v
+```
+
+> Windows 若因權限失敗，請改用「**以系統管理員身分開啟**的終端機」再執行 `corepack enable`，或改用方法 2。
+
+### 方法 2：用 npm 全域安裝（最簡單）
+
+```bash
+npm install -g pnpm
+pnpm -v
+```
+
+### 方法 3：官方獨立安裝腳本
+
+- **Windows（PowerShell）**
+
+  ```powershell
+  iwr https://get.pnpm.io/install.ps1 -useb | iex
+  ```
+
+- **macOS / Linux**
+
+  ```bash
+  curl -fsSL https://get.pnpm.io/install.sh | sh -
+  ```
+
+  （macOS 也可用 `brew install pnpm`。）
+
+### 不想安裝也能用（npx）
+
+不裝、只用一次：
+
+```bash
+npx pnpm@11 -C app install
+npx pnpm@11 -C app dev
+```
+
+裝好（或使用 npx）後，於 `app/` 目錄使用：
+
+```bash
+pnpm install
+pnpm dev
+```
+
+> **不想安裝 pnpm？** 沒問題——本專案用 **npm 也能跑**，見上方「快速開始」。
+
+---
+
 ## 指令
 
 以下指令均**在 `app/` 目錄內**執行（或於根目錄用 `npm --prefix app <script>`／`pnpm -C app <script>`）。
