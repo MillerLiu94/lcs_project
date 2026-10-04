@@ -87,12 +87,20 @@ describe('query/setFilter 與 clearFilters', () => {
   })
 
   test('真實 mock 資料：地區 chip 篩出符合的事件，未知地區為空且非錯誤', async () => {
-    const store = makeStore()
-    await store.dispatch('query/setFilter', { region: '中華路' })
-    expect(store.state.query.events.length).toBeGreaterThan(0)
-    expect(store.state.query.events.every((e) => e.placeText.includes('中華路'))).toBe(true)
-    await store.dispatch('query/setFilter', { region: '不存在的地區' })
-    expect(store.state.query.events).toEqual([])
-    expect(store.state.query.error).toBeFalsy()
+    // seed 的 reportedAt 固定為 2026-10，預設 time:'month' 需以固定時鐘評估，
+    // 否則離開 2026-10 後種子事件會被時間窗剪除（time-bomb）。
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2026-10-04T12:00:00+08:00'))
+    try {
+      const store = makeStore()
+      await store.dispatch('query/setFilter', { region: '中華路' })
+      expect(store.state.query.events.length).toBeGreaterThan(0)
+      expect(store.state.query.events.every((e) => e.placeText.includes('中華路'))).toBe(true)
+      await store.dispatch('query/setFilter', { region: '不存在的地區' })
+      expect(store.state.query.events).toEqual([])
+      expect(store.state.query.error).toBeFalsy()
+    } finally {
+      vi.useRealTimers()
+    }
   })
 })
