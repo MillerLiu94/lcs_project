@@ -23,20 +23,23 @@
           @audio="onAudio"
           @error="attachError = $event"
         />
-        <VoiceButton
-          :supported="voiceSupported"
-          @result="onVoiceResult"
-          @error="onVoiceError"
-        />
-        <button
-          type="button"
-          class="prompt-bar__send"
-          :disabled="!canSubmit || busy"
-          :aria-label="busy ? '處理中' : submitLabel"
-          @click="onSend"
-        >
-          <i class="el-icon-position" style="font-size: 1.25rem" aria-hidden="true" />
-        </button>
+        <div class="prompt-bar__actions">
+          <VoiceButton
+            :supported="voiceSupported"
+            compact
+            @result="onVoiceResult"
+            @error="onVoiceError"
+          />
+          <button
+            type="button"
+            class="prompt-bar__send"
+            :disabled="!canSubmit || busy"
+            :aria-label="busy ? '處理中' : submitLabel"
+            @click="onSend"
+          >
+            <i class="el-icon-position" style="font-size: 1.25rem" aria-hidden="true" />
+          </button>
+        </div>
       </div>
     </div>
 
@@ -158,9 +161,9 @@ export default {
 .prompt-bar__label { font-size: 1.125rem; font-weight: 700; color: var(--foreground); }
 .prompt-bar__field {
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
   gap: 0.5rem;
-  padding: 0.5rem 0.5rem 0.5rem 1rem;
+  padding: 0.75rem 0.75rem 0.75rem 1rem;
   background: var(--card);
   color: var(--card-foreground);
   border: 2px solid var(--input);
@@ -169,10 +172,10 @@ export default {
 }
 .prompt-bar__field:focus-within { border-color: var(--ring); outline: 2px solid var(--ring); outline-offset: 2px; }
 .prompt-bar__input {
-  flex: 1 1 auto;
+  width: 100%;
   min-height: 2.75rem;
   max-height: 12rem;
-  padding: 0.5rem 0;
+  padding: 0.25rem 0;
   background: transparent;
   color: inherit;
   border: none;
@@ -184,7 +187,8 @@ export default {
   line-height: 1.5;
 }
 .prompt-bar__input::placeholder { color: var(--muted-foreground); }
-.prompt-bar__controls { display: flex; align-items: center; gap: 0.25rem; }
+.prompt-bar__controls { display: flex; align-items: center; gap: 0.5rem; }
+.prompt-bar__actions { display: flex; align-items: center; gap: 0.25rem; margin-left: auto; }
 .prompt-bar__send {
   display: grid;
   place-items: center;

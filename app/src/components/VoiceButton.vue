@@ -2,13 +2,13 @@
   <button
     type="button"
     class="voice-button"
-    :class="{ 'voice-button--listening': listening }"
+    :class="{ 'voice-button--listening': listening, 'voice-button--compact': compact }"
     :aria-pressed="String(listening)"
     :aria-label="ariaLabel"
     @click="onClick"
   >
     <MicrophoneIcon :size="24" />
-    <span class="voice-button__label">{{ buttonLabel }}</span>
+    <span v-if="!compact" class="voice-button__label">{{ buttonLabel }}</span>
   </button>
 </template>
 
@@ -21,6 +21,7 @@ export default {
   components: { MicrophoneIcon },
   props: {
     supported: { type: Boolean, default: false },
+    compact: { type: Boolean, default: false },
   },
   data() {
     return { listening: false }
@@ -91,6 +92,13 @@ export default {
   background: var(--primary);
   color: var(--primary-foreground);
   border-color: var(--primary);
+}
+.voice-button--compact {
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  border-radius: var(--radius-pill);
 }
 .voice-button__label {
   font-weight: 600;
