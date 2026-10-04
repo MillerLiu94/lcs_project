@@ -1,4 +1,5 @@
-import { mount } from '@vue/test-utils'
+import { createLocalVue, mount } from '@vue/test-utils'
+import VueRouter from 'vue-router'
 import AppShell from '../AppShell.vue'
 
 const realMatchMedia = window.matchMedia
@@ -32,5 +33,35 @@ test.each([
   expect(w.find('.bottom-nav').exists()).toBe(!desktop)
   expect(w.find('.app-shell--desktop').exists()).toBe(desktop)
   expect(w.text()).toContain('content')
+  w.destroy()
+})
+
+async function mountWithPath(path) {
+  const localVue = createLocalVue()
+  localVue.use(VueRouter)
+  const router = new VueRouter({
+    routes: [
+      { path: '/', component: { template: '<div />' } },
+      { path: '/events', component: { template: '<div />' } },
+    ],
+  })
+  await router.push(path)
+  return mount(AppShell, {
+    localVue,
+    router,
+    stubs: ['router-link'],
+    slots: { default: '<p>content</p>' },
+  })
+}
+
+test('非首頁時在內容上方提供回首頁', async () => {
+  const w = await mountWithPath('/events')
+  expect(w.findComponent({ name: 'HomeLink' }).exists()).toBe(true)
+  w.destroy()
+})
+
+test('首頁時不顯示回首頁', async () => {
+  const w = await mountWithPath('/')
+  expect(w.findComponent({ name: 'HomeLink' }).exists()).toBe(false)
   w.destroy()
 })

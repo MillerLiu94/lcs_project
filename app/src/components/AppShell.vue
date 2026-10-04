@@ -3,6 +3,7 @@
     <TopNav v-if="isDesktop" />
 
     <main class="app-shell__main">
+      <HomeLink v-if="showHomeLink" />
       <slot />
     </main>
 
@@ -13,14 +14,22 @@
 <script>
 import TopNav from './TopNav.vue'
 import BottomNav from './BottomNav.vue'
+import HomeLink from './HomeLink.vue'
 import { useBreakpoint } from '../composables/useBreakpoint'
 
 export default {
   name: 'AppShell',
-  components: { TopNav, BottomNav },
+  components: { TopNav, BottomNav, HomeLink },
   setup() {
     const { isDesktop } = useBreakpoint()
     return { isDesktop }
+  },
+  computed: {
+    // 首頁本身就是家，不顯示回首頁；其餘每一頁都在內容上方提供。
+    showHomeLink() {
+      const path = this.$route && this.$route.path
+      return path !== '/'
+    },
   },
 }
 </script>

@@ -1,7 +1,6 @@
 <template>
   <section v-if="script" class="assistant">
     <header class="assistant__top">
-      <button type="button" class="assistant__home" @click="goHome">回首頁</button>
       <span class="assistant__progress">{{ progress }}</span>
     </header>
 
@@ -112,9 +111,6 @@ export default {
       this.text = ''
       if (!this.script) this.$router.replace('/')
     },
-    goHome() {
-      this.$router.push('/')
-    },
     answer(value) {
       const step = this.currentStep
       if (!step) return
@@ -167,18 +163,7 @@ export default {
 
 <style scoped>
 .assistant { display: flex; flex-direction: column; gap: var(--space-3); }
-.assistant__top { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.assistant__home {
-  min-height: 48px;
-  padding: 0 0.5rem;
-  background: none;
-  border: none;
-  color: var(--foreground);
-  font: inherit;
-  font-size: var(--font-size-meta);
-  cursor: pointer;
-}
-.assistant__home:focus-visible { outline: 3px solid var(--ring); outline-offset: 2px; }
+.assistant__top { display: flex; align-items: center; justify-content: flex-end; }
 .assistant__progress { color: var(--muted-foreground); font-size: var(--font-size-meta); }
 .assistant__title { margin: 0; font-size: var(--font-size-h2); line-height: var(--line-height-h2); }
 .assistant__turn { display: flex; align-items: flex-start; gap: 0.6rem; }
