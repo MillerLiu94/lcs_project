@@ -15,9 +15,15 @@ import ClarifyView from '../views/clarify/ClarifyView.vue'
 Vue.use(VueRouter)
 
 export const NAV_ITEMS = [
-  { to: '/report', label: '回報問題' },
-  { to: '/events', label: '看看附近事件' },
-  { to: '/welfare', label: '找福利和活動' },
+  { to: '/report', label: '回報問題', icon: 'Flag' },
+  { to: '/events', label: '附近事件', icon: 'MapPin' },
+  { to: '/welfare', label: '福利活動', icon: 'Gift' },
+]
+
+// 手機導覽多了回首頁的路徑；桌面版品牌本身就是回首頁，故不重複。
+export const MOBILE_NAV_ITEMS = [
+  { to: '/', label: '首頁', icon: 'House' },
+  ...NAV_ITEMS,
 ]
 
 const routes = [
